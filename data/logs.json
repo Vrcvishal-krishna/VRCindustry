@@ -1,5 +1,269 @@
 [
   {
+    "id": "log_1791584323924",
+    "timestamp": "2026-10-09T22:18:43.924Z",
+    "type": "apollo_lead_found",
+    "message": "Verified contact found on Apollo: rishikesh@rapido.bike",
+    "details": {}
+  },
+  {
+    "id": "log_1791584319241",
+    "timestamp": "2026-10-09T22:18:39.241Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/rishikeshsr",
+    "details": {}
+  },
+  {
+    "id": "log_1791584319239",
+    "timestamp": "2026-10-09T22:18:39.239Z",
+    "type": "apify_search_completed",
+    "message": "Found 9 candidate(s) on Apify for Rapido",
+    "details": {
+      "candidates": [
+        {
+          "name": "Rishikesh SR",
+          "firstName": "Rishikesh",
+          "lastName": "SR",
+          "title": "Co Founder @ Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/rishikeshsr",
+          "snippet": "Experience · Co Founder. Rapido. Nov 2015 - Present 11 years. Bengaluru Area, India. Rethinking people's transportation with Ride Sharing Platform for the masses ...Read more"
+        },
+        {
+          "name": "Prashant Kumar Sharma",
+          "firstName": "Prashant",
+          "lastName": "Kumar Sharma",
+          "title": "Partnerships Manager at Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/prashant-kumar-sharma-3823ba372",
+          "snippet": "Prashant Kumar Sharma. Partnerships Manager at Rapido. Rapido. Delhi, India. See your mutual connections. View mutual connections with Prashant.Read more"
+        },
+        {
+          "name": "Shravya Reddy",
+          "firstName": "Shravya",
+          "lastName": "Reddy",
+          "title": "Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/shravya-reddy-b401b274",
+          "snippet": "Experienced in B2B & B2C Operations with a demonstrated history of working in Two Wheeler… · Experience: Rapido · Education: Jawaharlal Nehru Technological ..."
+        },
+        {
+          "name": "Aravind Sanka",
+          "firstName": "Aravind",
+          "lastName": "Sanka",
+          "title": "Part of the team which is creating ...",
+          "linkedinUrl": "https://in.linkedin.com/in/aravind-sanka-8a876045",
+          "snippet": "Co Founder. Rapido - Bike Taxi of India. Nov 2015 - Present 11 years. Bengaluru, Karnataka, India. You can reach me at aravind@rapido.bike. Co-Founder.Read more"
+        },
+        {
+          "name": "Isaac John Wesley",
+          "firstName": "Isaac",
+          "lastName": "John Wesley",
+          "title": "Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/isaacjohnwesley",
+          "snippet": "With over a decade of experience spanning from design to entrepreneurship and now… · Experience: Rapido · Education: Madras Christian College · Location ..."
+        },
+        {
+          "name": "Shivam Saket",
+          "firstName": "Shivam",
+          "lastName": "Saket",
+          "title": "Curious about how India moves. Obsessed ...",
+          "linkedinUrl": "https://in.linkedin.com/in/shivam-saket-52744b171",
+          "snippet": "Senior Manager - Founder's Office. Rapido. May 2025 - Feb 2026 10 months. Bangalore Urban, Karnataka, India. In this role, I addressed high-priority business ...Read more"
+        },
+        {
+          "name": "Umesh Talasila",
+          "firstName": "Umesh",
+          "lastName": "Talasila",
+          "title": "Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/umeshtalasila",
+          "snippet": "Innovative and results-driven Revenue Manager with a proven track record of driving… · Experience: Rapido · Education: Gandhi Institute of Technology ..."
+        },
+        {
+          "name": "Pavan Guntupalli",
+          "firstName": "Pavan",
+          "lastName": "Guntupalli",
+          "title": "Co - Founder at Rapido Bike of India",
+          "linkedinUrl": "https://in.linkedin.com/in/pavan-guntupalli-1ab52929",
+          "snippet": "Co-founder. Roppen Labs. Apr 2014 - Present 12 years 7 months. Co-Founder. Rapido - Bike Taxi of India. Nov 2014 - Present 12 years. Bengaluru, Karnataka, India ...Read more"
+        },
+        {
+          "name": "Anas Idrisi",
+          "firstName": "Anas",
+          "lastName": "Idrisi",
+          "title": "Co - Founder and CEO at RAPIDO ...",
+          "linkedinUrl": "https://in.linkedin.com/in/anas-idrisi-009760126",
+          "snippet": "Anas Idrisi. Co-Founder and CEO at RAPIDO ENTERPRISES. RAPIDO ENTERPRISES Jagannath International Management School,Vasant Kunj. Delhi, India.Read more"
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791584236140",
+    "timestamp": "2026-10-09T22:17:16.140Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Rapido\" (\"Founder\" OR \"Co-Founder\" OR \"Partnerships Manager\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791584235057",
+    "timestamp": "2026-10-09T22:17:15.057Z",
+    "type": "waterfall_started",
+    "message": "Starting prospecting for \"Rapido\" [Phone: false]",
+    "details": {
+      "allRoles": [
+        "Founder",
+        "Co-Founder",
+        "Partnerships Manager"
+      ],
+      "specificPerson": null,
+      "requiresPhone": false
+    }
+  },
+  {
+    "id": "log_1791584220320",
+    "timestamp": "2026-10-09T22:17:00.320Z",
+    "type": "apify_search_completed",
+    "message": "Found 9 candidate(s) on Apify for Rapido",
+    "details": {
+      "candidates": [
+        {
+          "name": "Rishikesh SR",
+          "firstName": "Rishikesh",
+          "lastName": "SR",
+          "title": "Co Founder @ Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/rishikeshsr",
+          "snippet": "Co Founder @ Rapido · A computer science graduate who started his entrepreneurship journey from College, after 2 failed startups in fintech and Logistics, ..."
+        },
+        {
+          "name": "Shravya Reddy",
+          "firstName": "Shravya",
+          "lastName": "Reddy",
+          "title": "Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/shravya-reddy-b401b274",
+          "snippet": "Experienced in B2B & B2C Operations with a demonstrated history of working in Two Wheeler… · Experience: Rapido · Education: Jawaharlal Nehru Technological ..."
+        },
+        {
+          "name": "Isaac John Wesley",
+          "firstName": "Isaac",
+          "lastName": "John Wesley",
+          "title": "Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/isaacjohnwesley",
+          "snippet": "With over a decade of experience spanning from design to entrepreneurship and now… · Experience: Rapido · Education: Madras Christian College · Location ..."
+        },
+        {
+          "name": "Aravind Sanka",
+          "firstName": "Aravind",
+          "lastName": "Sanka",
+          "title": "Part of the team which is creating ...",
+          "linkedinUrl": "https://in.linkedin.com/in/aravind-sanka-8a876045",
+          "snippet": "Co Founder. Rapido - Bike Taxi of India. Nov 2015 - Present 11 years. Bengaluru, Karnataka, India. You can reach me at aravind@rapido.bike. Co-Founder."
+        },
+        {
+          "name": "Umesh Talasila",
+          "firstName": "Umesh",
+          "lastName": "Talasila",
+          "title": "Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/umeshtalasila",
+          "snippet": "Innovative and results-driven Revenue Manager with a proven track record of driving… · Experience: Rapido · Education: Gandhi Institute of Technology ..."
+        },
+        {
+          "name": "Shivam Saket",
+          "firstName": "Shivam",
+          "lastName": "Saket",
+          "title": "Curious about how India moves. Obsessed ...",
+          "linkedinUrl": "https://in.linkedin.com/in/shivam-saket-52744b171",
+          "snippet": "Experience · Senior Manager - New Initiatives. Rapido. Mar 2026 - Aug 2026 6 months · Senior Manager - Founder's Office. Rapido. May 2025 - Feb 2026 10 months."
+        },
+        {
+          "name": "Kaushik Joshi",
+          "firstName": "Kaushik",
+          "lastName": "Joshi",
+          "title": "Head of Monetisation @ Rapido",
+          "linkedinUrl": "https://in.linkedin.com/in/kaushik-joshi",
+          "snippet": "Kaushik Joshi · Head of Monetisation @ Rapido · Building 0→1 businesses beyond mobility (Ads, Travel, Insurance) · Ex-McKinsey · Ex-Chief of Staff, MPL · AIR 2, ..."
+        },
+        {
+          "name": "Navya Mahajan",
+          "firstName": "Navya",
+          "lastName": "Mahajan",
+          "title": "Product - Rapido - BITS Pilani",
+          "linkedinUrl": "https://in.linkedin.com/in/navya-mahajan-43a873201",
+          "snippet": "Rapido. 2 years 4 months. Product Manager. Rapido. Feb 2026 - Present 9 months. Bengaluru, Karnataka, India. Founder's Office | Strategy & New Initiatives."
+        },
+        {
+          "name": "Pavan Guntupalli",
+          "firstName": "Pavan",
+          "lastName": "Guntupalli",
+          "title": "Co - Founder at Rapido Bike of India",
+          "linkedinUrl": "https://in.linkedin.com/in/pavan-guntupalli-1ab52929",
+          "snippet": "Co-founder. Roppen Labs. Apr 2014 - Present 12 years 7 months. Co-Founder. Rapido - Bike Taxi of India. Nov 2014 - Present 12 years. Bengaluru, Karnataka, India ..."
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791584196588",
+    "timestamp": "2026-10-09T22:16:36.588Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Rapido\" (\"Founder\" OR \"Collaboration Manager\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791584036779",
+    "timestamp": "2026-10-09T22:13:56.779Z",
+    "type": "apify_no_candidates",
+    "message": "No matching LinkedIn profiles found for Rapido",
+    "details": {}
+  },
+  {
+    "id": "log_1791584036778",
+    "timestamp": "2026-10-09T22:13:56.778Z",
+    "type": "apify_search_completed",
+    "message": "Found 0 candidate(s) on Apify for Rapido",
+    "details": {
+      "candidates": []
+    }
+  },
+  {
+    "id": "log_1791584020056",
+    "timestamp": "2026-10-09T22:13:40.056Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Rapido\" (\"Founder\" OR \"Collaboration Manager\" OR \"Chief Business Development Officer\" OR \"Head of Partnerships\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791584018951",
+    "timestamp": "2026-10-09T22:13:38.951Z",
+    "type": "waterfall_started",
+    "message": "Starting prospecting for \"Rapido\" [Phone: false]",
+    "details": {
+      "allRoles": [
+        "Founder",
+        "Collaboration Manager",
+        "Chief Business Development Officer",
+        "Head of Partnerships",
+        "Director of Strategic Alliances",
+        "VP of Operations"
+      ],
+      "specificPerson": null,
+      "requiresPhone": false
+    }
+  },
+  {
+    "id": "log_1791583623981",
+    "timestamp": "2026-10-09T22:07:03.981Z",
+    "type": "apify_search_completed",
+    "message": "Found 0 verified candidate(s) on Apify for Rapido",
+    "details": {
+      "candidates": []
+    }
+  },
+  {
+    "id": "log_1791583617120",
+    "timestamp": "2026-10-09T22:06:57.121Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Rapido\" (\"Founder\" OR \"Co-Founder\")",
+    "details": {}
+  },
+  {
     "id": "log_1791578916315",
     "timestamp": "2026-10-09T20:48:36.315Z",
     "type": "apify_email_found",

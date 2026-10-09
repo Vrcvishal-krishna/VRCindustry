@@ -3,7 +3,7 @@ const { addLog } = require('../db');
 
 /**
  * Searches LinkedIn profiles via Apify Google Search Results Scraper
- * With strict brand presence verification to eliminate false matches.
+ * Strict brand presence and headline verification.
  */
 async function searchLinkedInOnApify(brand, roles, specificPerson = null) {
   if (!config.APIFY_API_TOKEN) {
@@ -16,8 +16,10 @@ async function searchLinkedInOnApify(brand, roles, specificPerson = null) {
     if (specificPerson) {
       query = `site:linkedin.com/in/ "${specificPerson}" "${brand}"`;
     } else {
-      const topRoles = roles.slice(0, 2).map(r => `"${r}"`).join(' OR ');
-      query = `site:linkedin.com/in/ "${brand}" ${topRoles ? `(${topRoles})` : ''}`.trim();
+      // Include up to 4 roles to maximize finding founders / decision makers
+      const rolesToSearch = Array.isArray(roles) && roles.length > 0 ? roles : ['Founder', 'Co-Founder', 'Head of Partnerships'];
+      const topRoles = rolesToSearch.slice(0, 4).map(r => `"${r}"`).join(' OR ');
+      query = `site:linkedin.com/in/ "${brand}" (${topRoles})`.trim();
     }
 
     addLog('apify_search_started', `Searching Apify for: ${query}`);
@@ -28,7 +30,7 @@ async function searchLinkedInOnApify(brand, roles, specificPerson = null) {
       body: JSON.stringify({
         queries: query,
         maxPagesPerQuery: 1,
-        resultsPerPage: 6
+        resultsPerPage: 8
       })
     });
 
@@ -41,21 +43,22 @@ async function searchLinkedInOnApify(brand, roles, specificPerson = null) {
     const items = await res.json();
     const candidates = [];
     const brandLower = brand.toLowerCase();
-    const brandWords = brandLower.split(/\s+/).filter(w => w.length > 2);
+    const brandRegex = new RegExp(`(^|[^a-zA-Z0-9])${brandLower}([^a-zA-Z0-9]|$)`, 'i');
 
     for (const dataset of items) {
       for (const org of dataset.organicResults || []) {
         const url = org.url || '';
         const titleText = org.title || '';
         const snippetText = org.description || '';
-        const fullContext = (titleText + ' ' + snippetText).toLowerCase();
+        const fullContext = (titleText + ' ' + snippetText);
 
         if (!url.includes('linkedin.com/in/')) continue;
 
-        // STRICT BRAND VALIDATION
-        const matchesBrand = brandWords.some(w => fullContext.includes(w)) || fullContext.includes(brandLower);
-        if (!matchesBrand) {
-          console.log(`[Apify] Skipping unrelated profile: "${titleText}" (brand "${brand}" not found)`);
+        // STRICT BRAND VALIDATION:
+        // Must contain brand name as an exact word boundary (prevents false matches like "rápido" in French/Spanish)
+        const matchesBrandWord = brandRegex.test(fullContext);
+        if (!matchesBrandWord) {
+          console.log(`[Apify] Skipping unrelated profile: "${titleText}" (brand word "${brand}" not found)`);
           continue;
         }
 
@@ -82,7 +85,7 @@ async function searchLinkedInOnApify(brand, roles, specificPerson = null) {
       }
     }
 
-    addLog('apify_search_completed', `Found ${candidates.length} verified candidate(s) on Apify for ${brand}`, { candidates });
+    addLog('apify_search_completed', `Found ${candidates.length} candidate(s) on Apify for ${brand}`, { candidates });
     return candidates;
   } catch (err) {
     console.error('[Apify] Error during search:', err.message);
@@ -92,7 +95,6 @@ async function searchLinkedInOnApify(brand, roles, specificPerson = null) {
 
 /**
  * Scrapes direct verified email from LinkedIn profile URL using Apify
- * 100% Apify-based — Zero Apollo Credits!
  */
 async function searchEmailOnApify(linkedinUrl) {
   if (!config.APIFY_API_TOKEN || !linkedinUrl) return null;
@@ -117,7 +119,6 @@ async function searchEmailOnApify(linkedinUrl) {
     const result = (items || [])[0];
 
     if (result && result.found && result.email) {
-      addLog('apify_email_found', `Verified email found on Apify: ${result.email} (Apollo credits saved!)`);
       return {
         email: result.email,
         name: result.name || '',
@@ -134,7 +135,6 @@ async function searchEmailOnApify(linkedinUrl) {
 
 /**
  * Searches and enriches contact using Apollo.io
- * ONLY called when user explicitly asks for a phone number!
  * Strictly validates verified email + company match.
  */
 async function searchApollo(brand, candidate, orgDomain, orgCity, orgPhone) {
@@ -177,7 +177,7 @@ async function searchApollo(brand, candidate, orgDomain, orgCity, orgPhone) {
 
     // Strict Company Match check
     const personOrg = (p.organization?.name || '').toLowerCase();
-    const emailDomain = p.email.split('@')[1] || '';
+    const emailDomain = (p.email.split('@')[1] || '').toLowerCase();
     const cleanOrgDomain = (orgDomain || '').toLowerCase();
 
     const companyMatches = 
@@ -191,7 +191,7 @@ async function searchApollo(brand, candidate, orgDomain, orgCity, orgPhone) {
       return null;
     }
 
-    addLog('apollo_lead_found', `Verified contact with phone found on Apollo: ${p.email}`);
+    addLog('apollo_lead_found', `Verified contact found on Apollo: ${p.email}`);
 
     const phone = p.sanitized_phone || (p.phone_numbers && p.phone_numbers[0]?.sanitized_number) || orgPhone || 'Not Available';
     const city = p.city || orgCity || 'Not Available';
@@ -210,6 +210,53 @@ async function searchApollo(brand, candidate, orgDomain, orgCity, orgPhone) {
     console.error('[Apollo] Error in search:', err.message);
     return null;
   }
+}
+
+/**
+ * Validates whether an extracted email and company strictly belong to target brand
+ */
+function isCompanyMatch(targetBrand, targetDomain, candidateCompany, candidateEmail) {
+  const brandNorm = (targetBrand || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const compNorm = (candidateCompany || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const emailDomain = (candidateEmail ? candidateEmail.split('@')[1] : '').toLowerCase();
+  const targetDomainNorm = (targetDomain || '').toLowerCase().replace(/^www\./, '');
+
+  // 1. Check email domain match (e.g. @rapido.bike, @atherenergy.com)
+  if (targetDomainNorm && emailDomain) {
+    if (emailDomain === targetDomainNorm || emailDomain.includes(brandNorm)) {
+      return true;
+    }
+  }
+
+  // 2. Check company name match
+  if (compNorm && brandNorm) {
+    if (compNorm.includes(brandNorm) || brandNorm.includes(compNorm)) {
+      return true;
+    }
+  }
+
+  // 3. Fallback: if email domain contains brand name
+  if (emailDomain && brandNorm && emailDomain.includes(brandNorm)) {
+    return true;
+  }
+
+  return false;
+}
+
+/**
+ * Checks for direct email mentioned in the public snippet
+ */
+function extractEmailFromSnippet(snippet, targetBrand, targetDomain) {
+  if (!snippet) return null;
+  const matches = snippet.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g);
+  if (!matches) return null;
+
+  for (const email of matches) {
+    if (isCompanyMatch(targetBrand, targetDomain, '', email)) {
+      return email;
+    }
+  }
+  return null;
 }
 
 /**
@@ -239,20 +286,52 @@ function extractCityFromSnippet(snippet) {
 }
 
 /**
- * Executes Smart Intent-Driven Prospecting:
- * - If requiresPhone === true: Routes to Apollo (retrieves direct phone + verified email)
- * - If requiresPhone === false: Routes to Apify ONLY (retrieves verified email with ZERO Apollo credits!)
+ * Executes Smart Intent-Driven Prospecting with Strict Company Verification:
+ * 1. Resolves official organization domain (e.g. rapido.bike).
+ * 2. Apify Google Search (finds verified profiles matching brand & roles).
+ * 3. Apify Email Finder: Strictly verifies company match (blocks ExclusiveWallz/Banks Avocats).
+ * 4. Snippet Email Check: Extracts emails in bio/snippet (e.g. aravind@rapido.bike).
+ * 5. Apollo Fallback: Verified company matching for genuine company leads.
  */
 async function executeWaterfall(brand, allRoles, specificPerson = null, options = { requiresPhone: false }) {
   const requiresPhone = Boolean(options && options.requiresPhone);
 
-  addLog('waterfall_started', `Starting prospecting for "${brand}" [Phone Requested: ${requiresPhone}]`, { 
+  addLog('waterfall_started', `Starting prospecting for "${brand}" [Phone: ${requiresPhone}]`, { 
     allRoles, 
     specificPerson, 
     requiresPhone 
   });
 
-  // 1. Apify Search to find relevant LinkedIn profiles
+  // Step 0: Resolve Target Organization Domain & City (Free org metadata)
+  let orgDomain = '';
+  let orgCity = '';
+  let orgPhone = '';
+
+  try {
+    const orgRes = await fetch('https://api.apollo.io/v1/organizations/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Api-Key': config.APOLLO_API_KEY
+      },
+      body: JSON.stringify({ q_organization_name: brand, per_page: 1 })
+    });
+
+    if (orgRes.ok) {
+      const orgData = await orgRes.json();
+      const org = (orgData.organizations || [])[0];
+      if (org) {
+        orgDomain = org.primary_domain || '';
+        orgCity = org.city || '';
+        orgPhone = org.phone || '';
+        console.log(`[Org Resolver] ${brand} ➔ Domain: ${orgDomain}, City: ${orgCity}`);
+      }
+    }
+  } catch (e) {
+    console.warn('[Org Resolver] Warning:', e.message);
+  }
+
+  // Step 1: Apify Google Search Scraper
   const candidates = await searchLinkedInOnApify(brand, allRoles, specificPerson);
 
   if (!candidates || candidates.length === 0) {
@@ -260,84 +339,79 @@ async function executeWaterfall(brand, allRoles, specificPerson = null, options 
     return { lead: null, stage: 'Apify' };
   }
 
-  // CASE A: User explicitly requested Phone Number ➔ Route to Apollo
-  if (requiresPhone) {
-    console.log(`[Smart Router] 📞 User requested PHONE number. Routing to Apollo to fetch phone + email...`);
-    
-    // Look up company domain and phone via Apollo org search (free metadata)
-    let orgDomain = '';
-    let orgCity = '';
-    let orgPhone = '';
-
-    try {
-      const orgRes = await fetch('https://api.apollo.io/v1/organizations/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Api-Key': config.APOLLO_API_KEY
-        },
-        body: JSON.stringify({ q_organization_name: brand, per_page: 1 })
-      });
-
-      if (orgRes.ok) {
-        const orgData = await orgRes.json();
-        const org = (orgData.organizations || [])[0];
-        if (org) {
-          orgDomain = org.primary_domain || '';
-          orgCity = org.city || '';
-          orgPhone = org.phone || '';
-        }
-      }
-    } catch (e) {
-      console.warn('[Apollo Org] Warning:', e.message);
-    }
-
-    // Match candidate on Apollo
-    for (const candidate of candidates) {
-      const apolloResult = await searchApollo(brand, candidate, orgDomain, orgCity, orgPhone);
-      if (apolloResult && apolloResult.emailStatus === 'verified') {
-        return { lead: apolloResult, stage: 'Apollo (Phone Requested)' };
-      }
-    }
-
-    // Direct org match fallback on Apollo
-    const apolloDirect = await searchApollo(brand, null, orgDomain, orgCity, orgPhone);
-    if (apolloDirect && apolloDirect.emailStatus === 'verified') {
-      return { lead: apolloDirect, stage: 'Apollo (Phone Requested)' };
-    }
-
-    return { lead: null, stage: 'Apollo' };
-  }
-
-  // CASE B: User did NOT ask for Phone Number ➔ 100% Apify (Zero Apollo Credits!)
-  console.log(`[Smart Router] 📧 Phone not requested. Routing to Apify ONLY (Saving Apollo credits!)...`);
-
+  // Iterate over candidates
   for (const candidate of candidates) {
-    const emailData = await searchEmailOnApify(candidate.linkedinUrl);
+    console.log(`[Waterfall] Evaluating candidate: ${candidate.name} (${candidate.title})`);
 
-    if (emailData && emailData.email) {
-      const city = extractCityFromSnippet(candidate.snippet);
-
-      console.log(`[Smart Router] SUCCESS via Apify! Email: ${emailData.email} (0 Apollo credits used)`);
-
+    // A. Check for direct email in the public snippet (e.g., aravind@rapido.bike)
+    const snippetEmail = extractEmailFromSnippet(candidate.snippet, brand, orgDomain);
+    if (snippetEmail) {
+      console.log(`[Waterfall] Found verified email directly in snippet: ${snippetEmail}`);
+      addLog('snippet_email_found', `Verified email found in profile: ${snippetEmail}`);
       return {
         lead: {
-          name: emailData.name || candidate.name,
+          name: candidate.name,
           linkedinUrl: candidate.linkedinUrl,
-          email: emailData.email,
+          email: snippetEmail,
           emailStatus: 'verified',
-          phone: 'Not Requested',
-          city: city,
+          phone: requiresPhone ? (orgPhone || 'Not Available') : 'Not Requested',
+          city: extractCityFromSnippet(candidate.snippet) || orgCity || 'Not Available',
           title: candidate.title,
           source: 'Apify'
         },
         stage: 'Apify'
       };
     }
+
+    // B. Check Apify Email Scraper (Only if phone NOT specifically required)
+    if (!requiresPhone) {
+      const apifyEmailData = await searchEmailOnApify(candidate.linkedinUrl);
+
+      if (apifyEmailData && apifyEmailData.email) {
+        // STRICT COMPANY VALIDATION ON APIFY RESULT:
+        const isMatch = isCompanyMatch(brand, orgDomain, apifyEmailData.company, apifyEmailData.email);
+
+        if (isMatch) {
+          console.log(`[Waterfall] Apify Email Verified for ${brand}: ${apifyEmailData.email}`);
+          addLog('apify_email_found', `Verified email on Apify: ${apifyEmailData.email}`);
+          return {
+            lead: {
+              name: apifyEmailData.name || candidate.name,
+              linkedinUrl: candidate.linkedinUrl,
+              email: apifyEmailData.email,
+              emailStatus: 'verified',
+              phone: 'Not Requested',
+              city: extractCityFromSnippet(candidate.snippet) || orgCity || 'Not Available',
+              title: candidate.title,
+              source: 'Apify'
+            },
+            stage: 'Apify'
+          };
+        } else {
+          console.warn(`[Waterfall] DISCARDED Apify email mismatch: ${apifyEmailData.email} (${apifyEmailData.company}) does not match ${brand}`);
+          addLog('apify_email_mismatch_discarded', `Discarded unrelated email: ${apifyEmailData.email} (${apifyEmailData.company})`);
+        }
+      }
+    }
+
+    // C. Fallback to Apollo (for genuine verified company match or when phone is requested)
+    console.log(`[Waterfall] Querying Apollo match for candidate: ${candidate.name}...`);
+    const apolloResult = await searchApollo(brand, candidate, orgDomain, orgCity, orgPhone);
+
+    if (apolloResult && apolloResult.emailStatus === 'verified') {
+      console.log(`[Waterfall] SUCCESS on Apollo: ${apolloResult.email}`);
+      return { lead: apolloResult, stage: requiresPhone ? 'Apollo (Phone Requested)' : 'Apollo' };
+    }
   }
 
-  addLog('apify_no_email_found', `No verified email found on Apify for ${brand}`);
-  return { lead: null, stage: 'Apify' };
+  // Final direct org match fallback on Apollo
+  const apolloDirect = await searchApollo(brand, null, orgDomain, orgCity, orgPhone);
+  if (apolloDirect && apolloDirect.emailStatus === 'verified') {
+    return { lead: apolloDirect, stage: 'Apollo' };
+  }
+
+  addLog('waterfall_exhausted', `No verified contact details found for ${brand}`);
+  return { lead: null, stage: 'Exhausted' };
 }
 
 module.exports = {

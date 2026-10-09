@@ -65,7 +65,14 @@ app.post('/api/test-pitch', async (req, res) => {
 
   try {
     const searchRoles = [];
-    if (analysis.explicitRole) searchRoles.push(analysis.explicitRole);
+    if (Array.isArray(analysis.explicitRoles) && analysis.explicitRoles.length > 0) {
+      for (const r of analysis.explicitRoles) {
+        if (!searchRoles.includes(r)) searchRoles.push(r);
+      }
+    } else if (analysis.explicitRole) {
+      searchRoles.push(analysis.explicitRole);
+    }
+
     if (Array.isArray(analysis.recommendedRoles)) {
       for (const r of analysis.recommendedRoles) {
         if (!searchRoles.includes(r)) searchRoles.push(r);

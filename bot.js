@@ -112,16 +112,23 @@ async function handleMessage(msg) {
     return;
   }
 
-  // Prioritize explicitRole first if specified, then recommended roles
+  // Prioritize all explicit roles first if specified, then recommended roles
   const searchRoles = [];
-  if (analysis.explicitRole) searchRoles.push(analysis.explicitRole);
+  if (Array.isArray(analysis.explicitRoles) && analysis.explicitRoles.length > 0) {
+    for (const r of analysis.explicitRoles) {
+      if (!searchRoles.includes(r)) searchRoles.push(r);
+    }
+  } else if (analysis.explicitRole) {
+    searchRoles.push(analysis.explicitRole);
+  }
+
   if (Array.isArray(analysis.recommendedRoles)) {
     for (const r of analysis.recommendedRoles) {
       if (!searchRoles.includes(r)) searchRoles.push(r);
     }
   }
 
-  const personaLabel = analysis.explicitRole || searchRoles[0] || 'Partnerships Lead';
+  const personaLabel = searchRoles.slice(0, 2).join(' / ') || 'Partnerships Lead';
   const routingMsg = analysis.requiresPhone 
     ? `🔍 *Phone requested* ➔ Routing to Apollo for direct phone & verified email...`
     : `🔍 *Email requested* ➔ Routing to Apify (Zero Apollo Credits used)...`;

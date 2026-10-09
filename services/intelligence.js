@@ -17,16 +17,16 @@ Analyze the user's text and extract:
 1. "brand": The target company or brand name mentioned.
 2. "proposal": A concise summary of their pitch/collaboration idea (1 sentence).
 3. "person_name": Full name of a specific person if explicitly named, or null.
-4. "explicit_role": The specific designation if explicitly mentioned, or null.
-5. "recommended_roles": If no explicit role was specified, identify the top 3-4 most relevant executive job titles/designations at that target brand who handle this exact type of collaboration or pitch. (e.g., ["Head of Brand Partnerships", "Brand Manager", "Chief Marketing Officer", "Director of Business Development"]). If the company is early-stage or startup, include ["Founder", "Co-Founder", "CEO"].
-6. "requires_phone": boolean (set to true ONLY IF user explicitly requests phone number, mobile number, cell, or calling them, e.g., "get me their phone number", "find their mobile number", "need their contact number". Set to false if they only ask to connect, pitch, find contact, or email).
+4. "explicit_roles": Array of all specific designations mentioned (e.g., if user mentions "founders and collaboration managers", return ["Founder", "Co-Founder", "Collaboration Manager", "Partnerships Manager"]). If none mentioned, return [].
+5. "recommended_roles": Top 3-4 relevant executive job titles for this pitch/collaboration.
+6. "requires_phone": boolean (set to true ONLY IF user explicitly asks for phone number, mobile number, cell, or calling them).
 
 Output strictly valid JSON matching this schema:
 {
   "brand": "string",
   "proposal": "string",
   "person_name": "string or null",
-  "explicit_role": "string or null",
+  "explicit_roles": ["string"],
   "recommended_roles": ["string"],
   "requires_phone": false
 }`;
@@ -62,10 +62,11 @@ Output strictly valid JSON matching this schema:
       brand: parsed.brand || '',
       proposal: parsed.proposal || text,
       personName: parsed.person_name || null,
-      explicitRole: parsed.explicit_role || null,
+      explicitRoles: Array.isArray(parsed.explicit_roles) ? parsed.explicit_roles : (parsed.explicit_role ? [parsed.explicit_role] : []),
+      explicitRole: (parsed.explicit_roles && parsed.explicit_roles[0]) || parsed.explicit_role || null,
       recommendedRoles: Array.isArray(parsed.recommended_roles) && parsed.recommended_roles.length > 0 
         ? parsed.recommended_roles 
-        : ['Head of Partnerships', 'Brand Manager', 'Marketing Director', 'Founder'],
+        : ['Head of Partnerships', 'Brand Manager', 'Marketing Director', 'Founder', 'Co-Founder'],
       requiresPhone: Boolean(parsed.requires_phone)
     };
   } catch (err) {
