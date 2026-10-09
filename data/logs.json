@@ -1,0 +1,485 @@
+[
+  {
+    "id": "log_1791578916315",
+    "timestamp": "2026-10-09T20:48:36.315Z",
+    "type": "apify_email_found",
+    "message": "Verified email found on Apify: saurabh.sharma@atherenergy.com (Apify Only - 0 Apollo Credits used!)",
+    "details": {}
+  },
+  {
+    "id": "log_1791578913003",
+    "timestamp": "2026-10-09T20:48:33.003Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/saurabh-sharma-9b9b2715",
+    "details": {}
+  },
+  {
+    "id": "log_1791578913001",
+    "timestamp": "2026-10-09T20:48:33.001Z",
+    "type": "apify_search_completed",
+    "message": "Found 10 verified candidate(s) on Apify for Ather Energy",
+    "details": {
+      "candidates": [
+        {
+          "name": "Saurabh Sharma",
+          "firstName": "Saurabh",
+          "lastName": "Sharma",
+          "title": "Head of Marketing at Ather Energy",
+          "linkedinUrl": "https://in.linkedin.com/in/saurabh-sharma-9b9b2715",
+          "snippet": "Experience · Head of Marketing. Ather Energy. Feb 2025 - Present 1 year 9 months. Bengaluru, Karnataka, India · General Manager Scooter Business. Ather Energy.Read more"
+        },
+        {
+          "name": "Inderpreet Singh",
+          "firstName": "Inderpreet",
+          "lastName": "Singh",
+          "title": "Senior Trade Marketing Manager at ...",
+          "linkedinUrl": "https://in.linkedin.com/in/inderpreet-singh-5336a3a",
+          "snippet": "Experience ; Senior Trade Marketing Manager. Greaves Electric Mobility. Sep 2026 ; Sr Brand Manager. Ather Energy. Apr 2023 ; Head Of Marketing. Quick Heal. Jul ...Read more"
+        },
+        {
+          "name": "Manveer Sood",
+          "firstName": "Manveer",
+          "lastName": "Sood",
+          "title": "Ex - Uber, Zomato & Ather",
+          "linkedinUrl": "https://in.linkedin.com/in/manveersood",
+          "snippet": "Head of Marketing Excellence. Ather Energy. Jan 2021 - Jul 2022 1 year 7 months. Bengaluru, Karnataka, India. Joined Ather during a formative 0–1 growth chapter ...Read more"
+        },
+        {
+          "name": "MP Vijayakumar",
+          "firstName": "MP",
+          "lastName": "Vijayakumar",
+          "title": "Building Brands @ Ather Energy",
+          "linkedinUrl": "https://in.linkedin.com/in/vijaymuggleprince",
+          "snippet": "Ather Energy. Apr 2023. Nominated to the TAAS 'Wall of Fame' by the head of Marketing for living by one of the value commandments at Ather Energy - 'Know your ...Read more"
+        },
+        {
+          "name": "Pranesh Urs",
+          "firstName": "Pranesh",
+          "lastName": "Urs",
+          "title": "Head of Marketing, Greaves Electric Mobility",
+          "linkedinUrl": "https://in.linkedin.com/in/praneshurs",
+          "snippet": "VP & Head of Marketing. Ather Energy. Dec 2022 - Jun 2025 2 years 7 months. Bengaluru, Karnataka, India. Director Marketing. Samsung Electronics. Jul 2016 - Jul ...Read more"
+        },
+        {
+          "name": "Faran siddique",
+          "firstName": "Faran",
+          "lastName": "siddique",
+          "title": "Marketing Manager - Procurement, Media ...",
+          "linkedinUrl": "https://in.linkedin.com/in/faran-siddique-46bba756",
+          "snippet": "Marketing Manager -Procurement, Media buying and strategy, · Experience: Ather Energy · Education: Rizvi Institute Of Management Studies and Research ..."
+        },
+        {
+          "name": "Nitya Muralidharan",
+          "firstName": "Nitya",
+          "lastName": "Muralidharan",
+          "title": "Ather Energy",
+          "linkedinUrl": "https://in.linkedin.com/in/nitya-muralidharan-283591104",
+          "snippet": "With over 8 years of experience in brand marketing and management, I am currently the… · Experience: Ather Energy · Education: XLRI Jamshedpur · Location: ..."
+        },
+        {
+          "name": "Gopi Vishwanath",
+          "firstName": "Gopi",
+          "lastName": "Vishwanath",
+          "title": "Contact Center Operations - CRM",
+          "linkedinUrl": "https://in.linkedin.com/in/gopi-vishwanath",
+          "snippet": "Experience · Engagement Lead - Business Intelligence. Ather Energy. Jun 2022 - Present 4 years 4 months. India. At Ather, it is all about passion and purpose.Read more"
+        },
+        {
+          "name": "Ananiya P.",
+          "firstName": "Ananiya",
+          "lastName": "P.",
+          "title": "Head - EHSS Sustainability & CSR at Ather ...",
+          "linkedinUrl": "https://in.linkedin.com/in/ananiya-p-44983437",
+          "snippet": "Head - EHSS Sustainability & CSR at Ather Energy Private Limited · Experience: Ather Energy · Education: Anna University Affiliated · Location: Bengaluru ..."
+        },
+        {
+          "name": "Pratik Bhuptani",
+          "firstName": "Pratik",
+          "lastName": "Bhuptani",
+          "title": "Senior Manager @ Ather Energy",
+          "linkedinUrl": "https://in.linkedin.com/in/pratik-bhuptani-49812254",
+          "snippet": "With extensive experience in business development and sales, I currently serve as the Zonal Lead for Charging Infrastructure at Ather Energy, ...Read more"
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791578905175",
+    "timestamp": "2026-10-09T20:48:25.175Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Ather Energy\" (\"Head of Marketing\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791578905149",
+    "timestamp": "2026-10-09T20:48:25.149Z",
+    "type": "apify_pipeline_started",
+    "message": "Starting 100% Apify prospecting for \"Ather Energy\"",
+    "details": {
+      "allRoles": [
+        "Head of Marketing"
+      ],
+      "specificPerson": null
+    }
+  },
+  {
+    "id": "log_1791575425553",
+    "timestamp": "2026-10-09T19:50:25.553Z",
+    "type": "apollo_lead_found",
+    "message": "Verified contact found on Apollo: saurabh.sharma@atherenergy.com at Ather Energy",
+    "details": {}
+  },
+  {
+    "id": "log_1791575424441",
+    "timestamp": "2026-10-09T19:50:24.441Z",
+    "type": "smartlead_search_failed",
+    "message": "Smartlead rejected (401): {\"statusCode\":401,\"success\":false,\"message\":\"Unauthorized\",\"error\":\"Plan expired\"}",
+    "details": {}
+  },
+  {
+    "id": "log_1791575423591",
+    "timestamp": "2026-10-09T19:50:23.591Z",
+    "type": "smartlead_search_started",
+    "message": "Querying SmartProspect for Ather Energy",
+    "details": {}
+  },
+  {
+    "id": "log_1791575423588",
+    "timestamp": "2026-10-09T19:50:23.588Z",
+    "type": "apify_search_completed",
+    "message": "Found 10 verified candidate(s) for Ather Energy",
+    "details": {
+      "candidates": [
+        {
+          "name": "Saurabh Sharma",
+          "firstName": "Saurabh",
+          "lastName": "Sharma",
+          "title": "Head of Marketing at Ather Energy",
+          "linkedinUrl": "https://in.linkedin.com/in/saurabh-sharma-9b9b2715",
+          "snippet": "Head of Marketing at Ather Energy · Marketing professional with expertise in developing successful products & communication, executing integrated campaigns, ..."
+        },
+        {
+          "name": "Inderpreet Singh",
+          "firstName": "Inderpreet",
+          "lastName": "Singh",
+          "title": "Senior Trade Marketing Manager at ...",
+          "linkedinUrl": "https://in.linkedin.com/in/inderpreet-singh-5336a3a",
+          "snippet": "Experience ; Senior Trade Marketing Manager. Greaves Electric Mobility. Sep 2026 ; Sr Brand Manager. Ather Energy. Apr 2023 ; Head Of Marketing. Quick Heal. Jul ...Read more"
+        },
+        {
+          "name": "Manveer Sood",
+          "firstName": "Manveer",
+          "lastName": "Sood",
+          "title": "Ex - Uber, Zomato & Ather",
+          "linkedinUrl": "https://in.linkedin.com/in/manveersood",
+          "snippet": "Ather Energy. 3 years 8 months. Head – Partnerships & Events. Ather Energy. Apr ... Head of Marketing Excellence. Ather Energy. Jan 2021 - Jul 2022 1 year 7 ...Read more"
+        },
+        {
+          "name": "Pranesh Urs",
+          "firstName": "Pranesh",
+          "lastName": "Urs",
+          "title": "Head of Marketing, Greaves Electric Mobility",
+          "linkedinUrl": "https://in.linkedin.com/in/praneshurs",
+          "snippet": "VP & Head of Marketing. Ather Energy. Dec 2022 - Jun 2025 2 years 7 months. Bengaluru, Karnataka, India. Director Marketing. Samsung Electronics. Jul 2016 - Jul ...Read more"
+        },
+        {
+          "name": "MP Vijayakumar",
+          "firstName": "MP",
+          "lastName": "Vijayakumar",
+          "title": "Building Brands @ Ather Energy",
+          "linkedinUrl": "https://in.linkedin.com/in/vijaymuggleprince",
+          "snippet": "Ather Energy. Apr 2023. Nominated to the TAAS 'Wall of Fame' by the head of Marketing for living by one of the value commandments at Ather Energy - 'Know your ...Read more"
+        },
+        {
+          "name": "Faran siddique",
+          "firstName": "Faran",
+          "lastName": "siddique",
+          "title": "Marketing Manager - Procurement, Media ...",
+          "linkedinUrl": "https://in.linkedin.com/in/faran-siddique-46bba756",
+          "snippet": "Marketing Manager -Procurement, Media buying and strategy, · Experience: Ather Energy · Education: Rizvi Institute Of Management Studies and Research ..."
+        },
+        {
+          "name": "Nitya Muralidharan",
+          "firstName": "Nitya",
+          "lastName": "Muralidharan",
+          "title": "Ather Energy",
+          "linkedinUrl": "https://in.linkedin.com/in/nitya-muralidharan-283591104",
+          "snippet": "With over 8 years of experience in brand marketing and management, I am currently the… · Experience: Ather Energy · Education: XLRI Jamshedpur · Location: ..."
+        },
+        {
+          "name": "Sanjeev kumar Singh",
+          "firstName": "Sanjeev",
+          "lastName": "kumar Singh",
+          "title": "Chief Operating Officer @ Ather ...",
+          "linkedinUrl": "https://in.linkedin.com/in/singhsanjeev3010",
+          "snippet": "Experience · Chief Operating Officer. Ather Energy. Apr 2024 - Present 2 years 7 months. Bengaluru, Karnataka, India · Senior Vice President & Head Manufacturing.Read more"
+        },
+        {
+          "name": "Anup Kumar Yadav",
+          "firstName": "Anup",
+          "lastName": "Kumar Yadav",
+          "title": "Marketing Operations & Media ...",
+          "linkedinUrl": "https://in.linkedin.com/in/anup-kumar-yadav-192aa5306",
+          "snippet": "Marketing Operations & Media Associate at Ather Energy · Experience: Ather Energy · Education: Sindhi institute of Management,Bengaluru · Location: 560076 ..."
+        },
+        {
+          "name": "Nilay Chandra",
+          "firstName": "Nilay",
+          "lastName": "Chandra",
+          "title": "Impact Investing at Elevar Equity, Ex Ather ...",
+          "linkedinUrl": "https://in.linkedin.com/in/nilay-chandra-8a821910",
+          "snippet": "Head of Marketing. Ather Energy. Oct 2015 - Jul 2022 6 years 10 months. Greater Bengaluru Area. Building the electric two-wheeler category in India is a once in ...Read more"
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791575415640",
+    "timestamp": "2026-10-09T19:50:15.640Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Ather Energy\" (\"Head of Marketing\" OR \"Head of Partnerships\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791575414736",
+    "timestamp": "2026-10-09T19:50:14.736Z",
+    "type": "waterfall_started",
+    "message": "Starting waterfall for brand \"Ather Energy\"",
+    "details": {
+      "allRoles": [
+        "Head of Marketing",
+        "Head of Partnerships",
+        "Brand Manager",
+        "Marketing Director",
+        "Founder"
+      ],
+      "specificPerson": null
+    }
+  },
+  {
+    "id": "log_1791575061699",
+    "timestamp": "2026-10-09T19:44:21.699Z",
+    "type": "apollo_lead_found",
+    "message": "Verified contact found on Apollo: guillaume.huin@us.mcd.com",
+    "details": {}
+  },
+  {
+    "id": "log_1791575059554",
+    "timestamp": "2026-10-09T19:44:19.554Z",
+    "type": "apollo_search_started",
+    "message": "Querying Apollo for Ather Energy",
+    "details": {
+      "candidate": {
+        "name": "Guillaume Huin",
+        "title": "Sr. Marketing Director @McDonald's",
+        "linkedinUrl": "https://www.linkedin.com/in/guillaume-huin-34b964101",
+        "snippet": "Sr. Marketing Director @McDonald's | Ad Age 40 under 40 | Adweek's Creative 100 Honoree | Brand Innovator 40 under 40 · Experience: McDonald's · Education: ..."
+      }
+    }
+  },
+  {
+    "id": "log_1791575059553",
+    "timestamp": "2026-10-09T19:44:19.553Z",
+    "type": "smartlead_search_failed",
+    "message": "Smartlead rejected: status 401",
+    "details": {
+      "error": "{\"statusCode\":401,\"success\":false,\"message\":\"Unauthorized\",\"error\":\"Plan expired\"}"
+    }
+  },
+  {
+    "id": "log_1791575058593",
+    "timestamp": "2026-10-09T19:44:18.593Z",
+    "type": "smartlead_search_started",
+    "message": "Querying SmartProspect for Ather Energy",
+    "details": {}
+  },
+  {
+    "id": "log_1791575058592",
+    "timestamp": "2026-10-09T19:44:18.592Z",
+    "type": "apify_search_completed",
+    "message": "Found 3 LinkedIn candidate(s) on Apify",
+    "details": {
+      "candidates": [
+        {
+          "name": "Guillaume Huin",
+          "title": "Sr. Marketing Director @McDonald's",
+          "linkedinUrl": "https://www.linkedin.com/in/guillaume-huin-34b964101",
+          "snippet": "Sr. Marketing Director @McDonald's | Ad Age 40 under 40 | Adweek's Creative 100 Honoree | Brand Innovator 40 under 40 · Experience: McDonald's · Education: ..."
+        },
+        {
+          "name": "Chris Ritchie",
+          "title": "Marketing Director at Thule Group",
+          "linkedinUrl": "https://www.linkedin.com/in/chris-ritchie-38b31020",
+          "snippet": "Marketing Director at Thule Group · Experience: Thule Group · Education: Saint Anselm College · Location: Stratham · 296 connections on LinkedIn."
+        },
+        {
+          "name": "Nathan Cook",
+          "title": "Global Marketing Director - Licensed Brands",
+          "linkedinUrl": "https://www.linkedin.com/in/nathan-cook-73b04675",
+          "snippet": "Global Marketing Director - Licensed Brands · Dec 2025 - Present ; US Marketing Director - Licensed Brands · Apr 2024 - Dec 2025 ; Senior Brand Manager, Global & US.Read more"
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791575034277",
+    "timestamp": "2026-10-09T19:43:54.277Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Ather Energy\" (\"Head of Partnerships\" OR \"Brand Manager\" OR \"Marketing Director\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791575034276",
+    "timestamp": "2026-10-09T19:43:54.276Z",
+    "type": "waterfall_started",
+    "message": "Starting waterfall for brand \"Ather Energy\"",
+    "details": {
+      "recommendedRoles": [
+        "Head of Partnerships",
+        "Brand Manager",
+        "Marketing Director",
+        "Founder"
+      ],
+      "specificPerson": null
+    }
+  },
+  {
+    "id": "log_1791575029488",
+    "timestamp": "2026-10-09T19:43:49.488Z",
+    "type": "query_received",
+    "message": "Voice note received from Vishal @SHR (@Shuruwaatofficial)",
+    "details": {
+      "chatId": 5111076110,
+      "duration": 30
+    }
+  },
+  {
+    "id": "log_1791574464761",
+    "timestamp": "2026-10-09T19:34:24.761Z",
+    "type": "apollo_lead_found",
+    "message": "Verified contact found on Apollo: steven.david@puma.com",
+    "details": {}
+  },
+  {
+    "id": "log_1791574463174",
+    "timestamp": "2026-10-09T19:34:23.174Z",
+    "type": "apollo_search_started",
+    "message": "Querying Apollo for Puma",
+    "details": {
+      "candidate": {
+        "name": "Steven David",
+        "title": "Head of Marketing & Brand",
+        "linkedinUrl": "https://www.linkedin.com/in/steven-j-david",
+        "snippet": "Steven David. Head of Marketing & Brand | Digital Innovation I Revenue Generator | Culture Builder. PUMA Group Worcester State University ...Read more"
+      }
+    }
+  },
+  {
+    "id": "log_1791574463172",
+    "timestamp": "2026-10-09T19:34:23.172Z",
+    "type": "smartlead_search_failed",
+    "message": "Smartlead rejected: status 401",
+    "details": {
+      "error": "{\"statusCode\":401,\"success\":false,\"message\":\"Unauthorized\",\"error\":\"Plan expired\"}"
+    }
+  },
+  {
+    "id": "log_1791574462276",
+    "timestamp": "2026-10-09T19:34:22.276Z",
+    "type": "smartlead_search_started",
+    "message": "Querying SmartProspect for Puma",
+    "details": {}
+  },
+  {
+    "id": "log_1791574462275",
+    "timestamp": "2026-10-09T19:34:22.275Z",
+    "type": "apify_search_completed",
+    "message": "Found 10 LinkedIn candidate(s) on Apify",
+    "details": {
+      "candidates": [
+        {
+          "name": "Steven David",
+          "title": "Head of Marketing & Brand",
+          "linkedinUrl": "https://www.linkedin.com/in/steven-j-david",
+          "snippet": "Steven David. Head of Marketing & Brand | Digital Innovation I Revenue Generator | Culture Builder. PUMA Group Worcester State University ...Read more"
+        },
+        {
+          "name": "Adriana S.",
+          "title": "Global Marketing Executive",
+          "linkedinUrl": "https://de.linkedin.com/in/adriana-sanchez-de-antunano-fuentes",
+          "snippet": "Currently serving as Global Marketing Director at PUMA, I lead global-to-local alignment across 15+ markets, helping transform brand strategy into measurable ...Read more"
+        },
+        {
+          "name": "Tara McRae",
+          "title": "Skechers",
+          "linkedinUrl": "https://www.linkedin.com/in/tara-mcrae-6b347a2",
+          "snippet": "PUMA NA President's Award. President, PUMA NA. Dec 2014. Annual President's Award for Outstanding Performance and for Bringing to Life The Four Key Brand ...Read more"
+        },
+        {
+          "name": "Pietro Schira",
+          "title": "Chief Marketing Officer | Global CMO",
+          "linkedinUrl": "https://it.linkedin.com/in/pietro-schira-b46b1b62",
+          "snippet": "Pietro Schira. Chief Marketing Officer | Global CMO | AI & digital transformation leader | driving omnichannel brand growth | Retail, Fashion, Sport | Ex Puma, ...Read more"
+        },
+        {
+          "name": "Kristina Bayton, M.A.S",
+          "title": "Senior Manager of Partnership ...",
+          "linkedinUrl": "https://www.linkedin.com/in/kristinabayton",
+          "snippet": "Experience · Senior Manager of Partnership Marketing. Reebok · Sports Marketing Manager for PUMA Basketball. PUMA Group · Director of Student Athlete Development.Read more"
+        },
+        {
+          "name": "Kate Johnson",
+          "title": "Manager Global Run Marketing at PUMA",
+          "linkedinUrl": "https://www.linkedin.com/in/katejohnson77",
+          "snippet": "Manager Global Run Marketing at PUMA · Experience: PUMA Group · Education: Syracuse University · Location: Boston · 500+ connections on LinkedIn."
+        },
+        {
+          "name": "Gianina Chávez Aliaga",
+          "title": "Global Marketing Director",
+          "linkedinUrl": "https://pe.linkedin.com/in/gianina-ch%C3%A1vez-aliaga-921aa4b6",
+          "snippet": "Global Marketing Director · Líder de marketing con más de 15 años de ... PUMA Group. 6 años 4 meses. Marketing Director. PUMA Group. may 2024 - jun 2026 ...Read more"
+        },
+        {
+          "name": "Juan Seclen",
+          "title": "Previously Marketing Manager at PUMA",
+          "linkedinUrl": "https://ca.linkedin.com/in/juanseclen",
+          "snippet": "Juan Seclen. Marketing, Activations, Creative Direction, Events Professional | Previously Marketing Manager at PUMA. Pier Five Humber College ...Read more"
+        },
+        {
+          "name": "Joana Amato",
+          "title": "Head of Integrated Marketing at PUMA",
+          "linkedinUrl": "https://www.linkedin.com/in/joana-amato-b776829",
+          "snippet": "Head of Integrated Marketing at PUMA · Specialties: coaching, communication skills, customer service, customer service training, email, english, italian, ..."
+        },
+        {
+          "name": "Julie Legrand",
+          "title": "Sr Director Global Brand Strategy ...",
+          "linkedinUrl": "https://de.linkedin.com/in/julie-legrand-8b90ab22",
+          "snippet": "Sr Director Global Brand Strategy & Comms @ PUMA Group | Ex-CMO @ H&M | Advisory board | Sports, Fashion, Lifestyle, FMCG Health & Beauty · Global Brand ..."
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791574446012",
+    "timestamp": "2026-10-09T19:34:06.012Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"Puma\" (\"Head of Brand Partnerships\" OR \"Global Marketing Director\" OR \"Chief Marketing Officer\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791574446010",
+    "timestamp": "2026-10-09T19:34:06.010Z",
+    "type": "waterfall_started",
+    "message": "Starting waterfall for brand \"Puma\"",
+    "details": {
+      "recommendedRoles": [
+        "Head of Brand Partnerships",
+        "Global Marketing Director",
+        "Chief Marketing Officer",
+        "Director of Business Development"
+      ],
+      "specificPerson": null
+    }
+  }
+]

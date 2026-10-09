@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Collab Prospector — Scraped Leads Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+  <!-- Top Navigation -->
+  <header class="border-b border-slate-800 bg-slate-950/70 sticky top-0 z-50 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/10">
+          <i class="fa-solid fa-bolt text-slate-950 font-bold text-lg"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+            Collab Prospector <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Verified Only</span>
+          </h1>
+          <p class="text-xs text-slate-400">Telegram Voice Notes ➔ Apify ➔ Smartlead ➔ Apollo Waterfall</p>
+        </div>
+      </div>
+      
+      <div class="flex items-center space-x-3">
+        <button onclick="openTestModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-play"></i> Test Pitch in Browser
+        </button>
+        <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
+          <i class="fa-solid fa-download"></i> Export CSV
+        </button>
+        <button onclick="fetchData()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700" title="Refresh">
+          <i class="fa-solid fa-rotate text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <!-- Stat Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+        <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Scraped Leads</div>
+        <div id="stat-total" class="text-3xl font-extrabold text-white mt-1">0</div>
+        <div class="text-xs text-slate-500 mt-2 flex items-center gap-1">
+          <i class="fa-solid fa-database text-indigo-400"></i> Persisted in DB
+        </div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-emerald-500/30 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+        <div class="text-emerald-400 text-xs font-medium uppercase tracking-wider">Verified Emails</div>
+        <div id="stat-verified" class="text-3xl font-extrabold text-emerald-400 mt-1">0</div>
+        <div class="text-xs text-emerald-500/80 mt-2 flex items-center gap-1">
+          <i class="fa-solid fa-shield-check"></i> Strictly 0% Catch-All
+        </div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+        <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Queries Processed</div>
+        <div id="stat-queries" class="text-3xl font-extrabold text-white mt-1">0</div>
+        <div class="text-xs text-slate-500 mt-2 flex items-center gap-1">
+          <i class="fa-solid fa-microphone text-sky-400"></i> Voice & Text Pitches
+        </div>
+      </div>
+
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 relative overflow-hidden shadow-sm">
+        <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Active Waterfall</div>
+        <div class="text-sm font-semibold text-slate-200 mt-2 space-y-1">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400">Apify Scraper:</span>
+            <span class="text-emerald-400 font-mono">Active</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400">Smartlead:</span>
+            <span class="text-amber-400 font-mono">Fallback Mode</span>
+          </div>
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-slate-400">Apollo Match:</span>
+            <span class="text-emerald-400 font-mono">Active</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Leads Table & Filters -->
+    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl shadow-xl overflow-hidden">
+      <!-- Search & Filters Toolbar -->
+      <div class="p-4 border-b border-slate-700/60 flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-800/30">
+        <div class="relative w-full sm:w-96">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+          <input 
+            type="text" 
+            id="search-input" 
+            oninput="filterLeads()"
+            placeholder="Search brand, name, title, email, city..." 
+            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
+          >
+        </div>
+
+        <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
+          <select id="source-filter" onchange="filterLeads()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
+            <option value="all">All Sources</option>
+            <option value="Apollo">Apollo</option>
+            <option value="Smartlead">Smartlead</option>
+            <option value="Apify">Apify</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs text-slate-300">
+          <thead class="bg-slate-900/60 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-700/60 font-semibold">
+            <tr>
+              <th class="py-3.5 px-4">Contact</th>
+              <th class="py-3.5 px-4">Brand / Company</th>
+              <th class="py-3.5 px-4">Verified Email</th>
+              <th class="py-3.5 px-4">Phone</th>
+              <th class="py-3.5 px-4">Location</th>
+              <th class="py-3.5 px-4">LinkedIn</th>
+              <th class="py-3.5 px-4">Source</th>
+              <th class="py-3.5 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leads-tbody" class="divide-y divide-slate-700/40 font-medium">
+            <tr>
+              <td colspan="8" class="py-12 text-center text-slate-500">
+                <i class="fa-solid fa-inbox text-3xl mb-2 block text-slate-600"></i>
+                No leads scraped yet. Send a voice note on Telegram to prospect!
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Live Execution Logs -->
+    <div class="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-5">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Live Activity Feed
+        </h3>
+        <span class="text-[11px] text-slate-500">Auto-refreshed</span>
+      </div>
+      <div id="logs-container" class="space-y-2 max-h-48 overflow-y-auto text-xs font-mono text-slate-400 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
+        <div class="text-slate-600">Waiting for queries...</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Test Pitch Modal -->
+  <div id="test-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-microphone text-indigo-400"></i> Test Pitch Simulation
+        </h3>
+        <button onclick="closeTestModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div>
+        <label class="block text-xs font-medium text-slate-400 mb-1.5">Enter Voice Note or Text Pitch:</label>
+        <textarea 
+          id="pitch-input" 
+          rows="3" 
+          placeholder="e.g. I saw Nike in the metro and want to pitch an influencer collaboration for their sportswear campaign"
+          class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+        ></textarea>
+      </div>
+
+      <div id="test-status" class="hidden text-xs p-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-300"></div>
+
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeTestModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-700">Cancel</button>
+        <button id="run-pitch-btn" onclick="runTestPitch()" class="px-4 py-2 rounded-xl bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-500 flex items-center gap-1.5">
+          <span>Run Pipeline</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let allLeads = [];
+
+    async function fetchData() {
+      try {
+        const [leadsRes, statsRes, logsRes] = await Promise.all([
+          fetch('/api/leads'),
+          fetch('/api/stats'),
+          fetch('/api/logs')
+        ]);
+
+        allLeads = await leadsRes.json();
+        const stats = await statsRes.json();
+        const logs = await logsRes.json();
+
+        // Render stats
+        document.getElementById('stat-total').textContent = stats.totalLeads || 0;
+        document.getElementById('stat-verified').textContent = stats.verifiedEmails || 0;
+        document.getElementById('stat-queries').textContent = stats.totalQueries || 0;
+
+        renderLeads(allLeads);
+        renderLogs(logs);
+      } catch (err) {
+        console.error('Fetch error:', err);
+      }
+    }
+
+    function renderLeads(leads) {
+      const tbody = document.getElementById('leads-tbody');
+      if (!leads || leads.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8" class="py-12 text-center text-slate-500">
+              <i class="fa-solid fa-inbox text-3xl mb-2 block text-slate-600"></i>
+              No leads found. Send a voice note to the Telegram Bot!
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = leads.map(l => `
+        <tr class="hover:bg-slate-800/40 transition">
+          <td class="py-3.5 px-4">
+            <div class="font-bold text-white">${escapeHtml(l.name)}</div>
+            <div class="text-[11px] text-slate-400 truncate max-w-[200px]">${escapeHtml(l.title || 'Decision Maker')}</div>
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-semibold text-[11px]">
+              ${escapeHtml(l.brand || '-')}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 font-mono">
+            <div class="flex items-center gap-1.5">
+              <span class="text-emerald-400 font-semibold">${escapeHtml(l.email)}</span>
+              <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px]">Verified</span>
+            </div>
+          </td>
+          <td class="py-3.5 px-4 text-slate-400">
+            ${escapeHtml(l.phone || 'Not Available')}
+          </td>
+          <td class="py-3.5 px-4 text-slate-300">
+            ${escapeHtml(l.city || 'Not Available')}
+          </td>
+          <td class="py-3.5 px-4">
+            ${l.linkedinUrl && l.linkedinUrl !== 'Not Available' ? `
+              <a href="${escapeHtml(l.linkedinUrl)}" target="_blank" class="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 hover:underline">
+                <i class="fa-brands fa-linkedin"></i> Profile
+              </a>
+            ` : '<span class="text-slate-500">N/A</span>'}
+          </td>
+          <td class="py-3.5 px-4">
+            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
+              l.source === 'Apollo' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' :
+              l.source === 'Smartlead' ? 'bg-purple-500/10 text-purple-300 border-purple-500/30' :
+              'bg-blue-500/10 text-blue-300 border-blue-500/30'
+            }">
+              ${escapeHtml(l.source || 'Apollo')}
+            </span>
+          </td>
+          <td class="py-3.5 px-4 text-right">
+            <button onclick="copyToClipboard('${escapeHtml(l.email)}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" title="Copy Email">
+              <i class="fa-regular fa-copy text-xs"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderLogs(logs) {
+      const container = document.getElementById('logs-container');
+      if (!logs || logs.length === 0) return;
+      container.innerHTML = logs.slice(0, 15).map(log => `
+        <div class="flex items-start gap-2">
+          <span class="text-slate-600 text-[10px] whitespace-nowrap">${new Date(log.timestamp).toLocaleTimeString()}</span>
+          <span class="text-emerald-400 font-semibold text-[10px]">[${escapeHtml(log.type)}]</span>
+          <span class="text-slate-300 truncate">${escapeHtml(log.message)}</span>
+        </div>
+      `).join('');
+    }
+
+    function filterLeads() {
+      const q = document.getElementById('search-input').value.toLowerCase();
+      const src = document.getElementById('source-filter').value;
+
+      const filtered = allLeads.filter(l => {
+        const matchesQuery = 
+          (l.name && l.name.toLowerCase().includes(q)) ||
+          (l.brand && l.brand.toLowerCase().includes(q)) ||
+          (l.email && l.email.toLowerCase().includes(q)) ||
+          (l.title && l.title.toLowerCase().includes(q)) ||
+          (l.city && l.city.toLowerCase().includes(q));
+
+        const matchesSource = src === 'all' || l.source === src;
+        return matchesQuery && matchesSource;
+      });
+
+      renderLeads(filtered);
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text);
+      alert('Copied to clipboard: ' + text);
+    }
+
+    function exportCSV() {
+      window.location.href = '/api/export';
+    }
+
+    function openTestModal() {
+      document.getElementById('test-modal').classList.remove('hidden');
+    }
+
+    function closeTestModal() {
+      document.getElementById('test-modal').classList.add('hidden');
+    }
+
+    async function runTestPitch() {
+      const text = document.getElementById('pitch-input').value.trim();
+      if (!text) return;
+
+      const statusEl = document.getElementById('test-status');
+      const btn = document.getElementById('run-pitch-btn');
+
+      statusEl.classList.remove('hidden');
+      statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Running waterfall pipeline...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('/api/test-pitch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ text })
+        });
+        const result = await res.json();
+        
+        if (result.lead) {
+          statusEl.innerHTML = `
+            <div class="text-emerald-400 font-bold mb-1">✅ Verified Lead Found!</div>
+            <div><b>Name:</b> ${result.lead.name}</div>
+            <div><b>Email:</b> ${result.lead.email} (Verified)</div>
+            <div><b>LinkedIn:</b> ${result.lead.linkedinUrl}</div>
+            <div><b>City:</b> ${result.lead.city}</div>
+          `;
+        } else {
+          statusEl.innerHTML = '<span class="text-amber-400">Sorry, no contact details found.</span>';
+        }
+
+        fetchData();
+      } catch (err) {
+        statusEl.innerHTML = `<span class="text-rose-400">Error: ${err.message}</span>`;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Auto poll every 5s
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
