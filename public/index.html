@@ -3,190 +3,370 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Collab Prospector — Scraped Leads Dashboard</title>
+  <title>Time Charge — Collab Prospector</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-    body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #cbcfd8;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.15);
+      border-radius: 9999px;
+    }
+    .stripe-pattern {
+      background: repeating-linear-gradient(
+        -45deg,
+        #f1f5f9,
+        #f1f5f9 6px,
+        #e2e8f0 6px,
+        #e2e8f0 12px
+      );
+    }
+    .active-row-green {
+      background-color: #eaf8ee !important;
+      border-radius: 20px !important;
+    }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen">
-  <!-- Top Navigation -->
-  <header class="border-b border-slate-800 bg-slate-950/70 sticky top-0 z-50 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-emerald-400 flex items-center justify-center shadow-lg shadow-emerald-500/10">
-          <i class="fa-solid fa-bolt text-slate-950 font-bold text-lg"></i>
-        </div>
-        <div>
-          <h1 class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
-            Collab Prospector <span class="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 font-semibold border border-emerald-500/30">Verified Only</span>
-          </h1>
-          <p class="text-xs text-slate-400">Telegram Voice Notes ➔ Apify ➔ Smartlead ➔ Apollo Waterfall</p>
-        </div>
-      </div>
+<body class="p-4 sm:p-8 min-h-screen flex items-center justify-center">
+
+  <!-- Main Application Canvas (Exact Card Design from Reference) -->
+  <div class="w-full max-w-[1360px] bg-[#fbfbfa] rounded-[44px] shadow-[0_24px_60px_-15px_rgba(0,0,0,0.18)] border border-white/80 overflow-hidden relative">
+    
+    <!-- Time Charge Brand Ambient Glow (Top-Right Gradient radiating exactly like reference, in official Time Charge Green) -->
+    <div class="absolute top-0 right-0 w-[580px] h-[480px] bg-gradient-to-bl from-[#bbf7d0]/70 via-[#dcfce7]/35 to-transparent pointer-events-none rounded-tr-[44px]"></div>
+
+    <!-- Top Navigation Bar -->
+    <header class="px-8 pt-7 pb-4 flex flex-wrap items-center justify-between gap-4 relative z-10">
       
-      <div class="flex items-center space-x-3">
-        <button onclick="openTestModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white transition flex items-center gap-1.5 shadow-sm">
-          <i class="fa-solid fa-play"></i> Test Pitch in Browser
+      <!-- Logo: Time Charge Capsule -->
+      <div class="flex items-center">
+        <div class="border border-slate-300/80 bg-white/80 backdrop-blur-md px-5 py-2 rounded-full shadow-sm flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#16a34a] animate-pulse"></span>
+          <span class="font-extrabold tracking-tight text-slate-900 text-sm">TIME CHARGE</span>
+          <span class="text-[10px] font-bold text-[#16a34a] bg-[#16a34a]/10 px-1.5 py-0.5 rounded-md">EV</span>
+        </div>
+      </div>
+
+      <!-- Navigation Pills (Center/Right) -->
+      <nav class="flex items-center bg-white/60 backdrop-blur-md p-1.5 rounded-full border border-slate-200/60 shadow-sm space-x-1 text-xs">
+        <button id="nav-prospects" onclick="switchTab('prospects')" class="bg-[#18181b] text-white font-medium px-5 py-2 rounded-full shadow-sm transition">
+          Prospects
         </button>
-        <button onclick="exportCSV()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition flex items-center gap-1.5 border border-slate-700">
-          <i class="fa-solid fa-download"></i> Export CSV
+        <button id="nav-overview" onclick="switchTab('overview')" class="text-slate-600 hover:text-slate-950 font-medium px-4 py-2 rounded-full transition">
+          Overview
         </button>
-        <button onclick="fetchData()" class="p-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition border border-slate-700" title="Refresh">
-          <i class="fa-solid fa-rotate text-sm"></i>
+        <button id="nav-logs" onclick="switchTab('logs')" class="text-slate-600 hover:text-slate-950 font-medium px-4 py-2 rounded-full transition flex items-center gap-1.5">
+          <span>Activity Logs</span>
+          <span id="log-count-badge" class="w-2 h-2 rounded-full bg-[#16a34a]"></span>
+        </button>
+        <button onclick="openTestModal()" class="text-slate-600 hover:text-slate-950 font-medium px-4 py-2 rounded-full transition flex items-center gap-1.5">
+          <i class="fa-solid fa-bolt text-[#16a34a]"></i> Test Pitch
+        </button>
+      </nav>
+
+      <!-- Right Controls: Settings, Notifications, Profile -->
+      <div class="flex items-center space-x-2 text-slate-700">
+        <button onclick="openTestModal()" class="hidden sm:flex items-center gap-1.5 bg-white/80 border border-slate-200 px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-white transition shadow-sm">
+          <i class="fa-solid fa-gear text-slate-500"></i> Setting
+        </button>
+        <button class="w-9 h-9 rounded-full bg-white/80 border border-slate-200 flex items-center justify-center hover:bg-white transition shadow-sm text-slate-600">
+          <i class="fa-regular fa-bell text-xs"></i>
+        </button>
+        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#16a34a] to-emerald-300 text-slate-950 font-bold text-xs flex items-center justify-center shadow-sm border-2 border-white">
+          TC
+        </div>
+      </div>
+    </header>
+
+    <!-- TAB 1: PROSPECTS VIEW (Matches Reference Design) -->
+    <div id="tab-prospects-content" class="px-8 pb-10 space-y-6 relative z-10">
+      
+      <!-- Section Header -->
+      <div class="pt-2">
+        <h1 class="text-[34px] font-bold tracking-tight text-slate-900 font-sans">Prospects</h1>
+      </div>
+
+      <!-- Segmented Metric Bar (Exact reproduction of reference's Interview/Hired/Project time bar) -->
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        
+        <!-- Left: Segmented Progress Capsule -->
+        <div class="flex flex-col space-y-1">
+          <div class="flex text-[11px] font-semibold text-slate-500 space-x-8 px-1">
+            <span>Verified Contacts</span>
+            <span>Success Rate</span>
+            <span>Apify Share</span>
+            <span>Apollo Backup</span>
+          </div>
+
+          <div class="flex items-center h-10 bg-white/80 border border-slate-200/90 rounded-full p-1 shadow-sm w-fit max-w-full overflow-hidden">
+            <!-- 1. Dark Badge (Total count) -->
+            <div id="badge-total-leads" class="h-8 px-4 bg-[#18181b] text-white rounded-full flex items-center justify-center text-xs font-bold shadow-sm">
+              0
+            </div>
+
+            <!-- 2. Time Charge Official Green Bar (Verified 100%) -->
+            <div id="badge-verified-leads" class="h-8 px-6 bg-[#22c55e] text-slate-950 rounded-full flex items-center justify-center text-xs font-extrabold mx-1 shadow-sm">
+              100% Verified
+            </div>
+
+            <!-- 3. Striped Pattern Capsule (Apify Share) -->
+            <div id="badge-apify-share" class="h-8 px-4 stripe-pattern text-slate-700 rounded-full flex items-center justify-center text-xs font-semibold border border-slate-200/70 mr-1">
+              Apify Primary
+            </div>
+
+            <!-- 4. Hollow Outline Capsule (Apollo backup) -->
+            <div id="badge-apollo-share" class="h-8 px-4 bg-transparent text-slate-600 rounded-full flex items-center justify-center text-xs font-medium border border-slate-300">
+              Apollo Backup
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Directory / Org Chat / Insights Pill Dropdowns -->
+        <div class="flex items-center space-x-2 text-xs font-semibold text-slate-700">
+          <button class="bg-white/80 border border-slate-200/80 px-4 py-2 rounded-full hover:bg-white transition flex items-center gap-1.5 shadow-sm">
+            <span>Directory</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          </button>
+          <button class="bg-white/80 border border-slate-200/80 px-4 py-2 rounded-full hover:bg-white transition flex items-center gap-1.5 shadow-sm">
+            <span>Channels</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          </button>
+          <button class="bg-white/80 border border-slate-200/80 px-4 py-2 rounded-full hover:bg-white transition flex items-center gap-1.5 shadow-sm">
+            <span>Insights</span>
+            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Toolbar & Search Bar (Exact reproduction of reference's middle row) -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
+        
+        <!-- Left Filter Pills -->
+        <div class="flex flex-wrap items-center gap-2 text-xs">
+          <div class="relative">
+            <select id="filter-source" onchange="filterLeads()" class="appearance-none bg-white/80 border border-slate-200/80 pl-3.5 pr-8 py-2 rounded-full text-slate-700 font-semibold focus:outline-none shadow-sm cursor-pointer hover:bg-white">
+              <option value="all">Source ⌵</option>
+              <option value="Apify">Apify</option>
+              <option value="Apollo">Apollo</option>
+            </select>
+          </div>
+
+          <div class="relative">
+            <select id="filter-city" onchange="filterLeads()" class="appearance-none bg-white/80 border border-slate-200/80 pl-3.5 pr-8 py-2 rounded-full text-slate-700 font-semibold focus:outline-none shadow-sm cursor-pointer hover:bg-white">
+              <option value="all">Location ⌵</option>
+              <option value="Bengaluru">Bengaluru</option>
+              <option value="Pune">Pune</option>
+              <option value="Mumbai">Mumbai</option>
+              <option value="Delhi">Delhi</option>
+            </select>
+          </div>
+
+          <div class="relative">
+            <select id="filter-status" onchange="filterLeads()" class="appearance-none bg-white/80 border border-slate-200/80 pl-3.5 pr-8 py-2 rounded-full text-slate-700 font-semibold focus:outline-none shadow-sm cursor-pointer hover:bg-white">
+              <option value="all">Status ⌵</option>
+              <option value="verified">Verified Only</option>
+            </select>
+          </div>
+
+          <!-- Rounded Search Input Bar -->
+          <div class="relative min-w-[260px] sm:w-80">
+            <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-xs"></i>
+            <input 
+              type="text" 
+              id="search-input" 
+              oninput="filterLeads()"
+              placeholder="Search..." 
+              class="w-full bg-white/80 border border-slate-200/80 rounded-full pl-9 pr-4 py-2 text-xs text-slate-800 placeholder-slate-400 font-medium focus:outline-none focus:border-[#16a34a] shadow-sm transition"
+            >
+          </div>
+        </div>
+
+        <!-- Right Actions: (+) button, Sort, Export -->
+        <div class="flex items-center space-x-2 text-xs">
+          <button onclick="openTestModal()" class="w-8 h-8 rounded-full bg-white/90 border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-white transition shadow-sm font-bold text-sm" title="New Pitch">
+            +
+          </button>
+          <button onclick="fetchData()" class="w-8 h-8 rounded-full bg-white/90 border border-slate-200 flex items-center justify-center text-slate-700 hover:bg-white transition shadow-sm text-xs" title="Refresh">
+            <i class="fa-solid fa-sliders"></i>
+          </button>
+          <button onclick="exportCSV()" class="bg-white/90 border border-slate-200 px-4 py-2 rounded-full text-slate-800 font-semibold hover:bg-white transition flex items-center gap-1.5 shadow-sm">
+            <i class="fa-solid fa-arrow-up-from-bracket text-xs text-slate-500"></i>
+            <span>Export</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Prospects Table Card Container (Exact clean table card from reference) -->
+      <div class="bg-white rounded-[32px] p-4 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.04)] border border-slate-200/60 overflow-hidden">
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left text-xs border-collapse">
+            
+            <!-- Table Header -->
+            <thead class="text-slate-400 font-medium text-[11px] border-b border-slate-100">
+              <tr>
+                <th class="py-3 px-3 w-8">
+                  <input type="checkbox" class="rounded border-slate-300 text-[#16a34a] focus:ring-[#16a34a]">
+                </th>
+                <th class="py-3 px-4 font-normal text-slate-400">Name</th>
+                <th class="py-3 px-4 font-normal text-slate-400">Job title</th>
+                <th class="py-3 px-4 font-normal text-slate-400">Brand / Company</th>
+                <th class="py-3 px-4 font-normal text-slate-400">Site / City</th>
+                <th class="py-3 px-4 font-normal text-slate-400">Verified Email</th>
+                <th class="py-3 px-4 font-normal text-slate-400">Phone</th>
+                <th class="py-3 px-4 font-normal text-slate-400 text-center">Status</th>
+                <th class="py-3 px-4 font-normal text-slate-400 text-right">Actions</th>
+              </tr>
+            </thead>
+
+            <!-- Table Body -->
+            <tbody id="leads-tbody" class="divide-y divide-slate-100/80 font-medium text-slate-700">
+              <tr>
+                <td colspan="9" class="py-16 text-center text-slate-400">
+                  <div class="w-12 h-12 rounded-full bg-[#f0fdf4] text-[#16a34a] flex items-center justify-center mx-auto mb-2 text-lg">
+                    <i class="fa-solid fa-microphone"></i>
+                  </div>
+                  <p class="font-semibold text-slate-700 text-sm">No scraped prospects yet</p>
+                  <p class="text-xs text-slate-400 mt-0.5">Send a voice note to @Aasha_mehtabot on Telegram or click "+ Test Pitch"!</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: OVERVIEW VIEW -->
+    <div id="tab-overview-content" class="px-8 pb-10 space-y-6 hidden relative z-10">
+      <div class="pt-2">
+        <h1 class="text-[34px] font-bold tracking-tight text-slate-900">Campaign Overview</h1>
+        <p class="text-xs text-slate-500 mt-1">High-level statistics for Time Charge EV partnership outreach</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-2">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Targets Identified</div>
+          <div id="overview-total" class="text-4xl font-extrabold text-slate-900">0</div>
+          <p class="text-xs text-[#16a34a] font-medium flex items-center gap-1">
+            <i class="fa-solid fa-check"></i> Actively monitored via Telegram
+          </p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-2">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Verified Deliverability</div>
+          <div class="text-4xl font-extrabold text-[#16a34a]">100%</div>
+          <p class="text-xs text-slate-500 font-medium">Strictly 0% Catch-All, 0% Invalid</p>
+        </div>
+
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-sm space-y-2">
+          <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Voice Notes Transcribed</div>
+          <div id="overview-queries" class="text-4xl font-extrabold text-slate-900">0</div>
+          <p class="text-xs text-slate-500 font-medium">Powered by Groq Whisper-large-v3</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: ACTIVITY LOGS (Separated in its own tab as requested) -->
+    <div id="tab-logs-content" class="px-8 pb-10 space-y-6 hidden relative z-10">
+      <div class="pt-2 flex items-center justify-between">
+        <div>
+          <h1 class="text-[34px] font-bold tracking-tight text-slate-900">Live Activity Logs</h1>
+          <p class="text-xs text-slate-500 mt-1">Real-time waterfall execution traces and query history</p>
+        </div>
+        <button onclick="fetchData()" class="bg-white border border-slate-200 px-4 py-2 rounded-full text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition">
+          <i class="fa-solid fa-rotate mr-1 text-[#16a34a]"></i> Refresh Logs
         </button>
       </div>
-    </div>
-  </header>
 
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-    <!-- Stat Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 relative overflow-hidden shadow-sm">
-        <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Total Scraped Leads</div>
-        <div id="stat-total" class="text-3xl font-extrabold text-white mt-1">0</div>
-        <div class="text-xs text-slate-500 mt-2 flex items-center gap-1">
-          <i class="fa-solid fa-database text-indigo-400"></i> Persisted in DB
-        </div>
-      </div>
-
-      <div class="bg-slate-800/60 border border-emerald-500/30 rounded-2xl p-5 relative overflow-hidden shadow-sm">
-        <div class="text-emerald-400 text-xs font-medium uppercase tracking-wider">Verified Emails</div>
-        <div id="stat-verified" class="text-3xl font-extrabold text-emerald-400 mt-1">0</div>
-        <div class="text-xs text-emerald-500/80 mt-2 flex items-center gap-1">
-          <i class="fa-solid fa-shield-check"></i> Strictly 0% Catch-All
-        </div>
-      </div>
-
-      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 relative overflow-hidden shadow-sm">
-        <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Queries Processed</div>
-        <div id="stat-queries" class="text-3xl font-extrabold text-white mt-1">0</div>
-        <div class="text-xs text-slate-500 mt-2 flex items-center gap-1">
-          <i class="fa-solid fa-microphone text-sky-400"></i> Voice & Text Pitches
-        </div>
-      </div>
-
-      <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-5 relative overflow-hidden shadow-sm">
-        <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">Active Waterfall</div>
-        <div class="text-sm font-semibold text-slate-200 mt-2 space-y-1">
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400">Apify Scraper:</span>
-            <span class="text-emerald-400 font-mono">Active</span>
-          </div>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400">Smartlead:</span>
-            <span class="text-amber-400 font-mono">Fallback Mode</span>
-          </div>
-          <div class="flex items-center justify-between text-xs">
-            <span class="text-slate-400">Apollo Match:</span>
-            <span class="text-emerald-400 font-mono">Active</span>
-          </div>
+      <div class="bg-white rounded-[32px] p-6 border border-slate-200/80 shadow-sm">
+        <div id="logs-container" class="space-y-3 max-h-[550px] overflow-y-auto custom-scrollbar font-mono text-xs pr-2">
+          <div class="text-slate-400 text-center py-10">Waiting for query events...</div>
         </div>
       </div>
     </div>
 
-    <!-- Leads Table & Filters -->
-    <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl shadow-xl overflow-hidden">
-      <!-- Search & Filters Toolbar -->
-      <div class="p-4 border-b border-slate-700/60 flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-800/30">
-        <div class="relative w-full sm:w-96">
-          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
-          <input 
-            type="text" 
-            id="search-input" 
-            oninput="filterLeads()"
-            placeholder="Search brand, name, title, email, city..." 
-            class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-9 pr-4 py-2 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition"
-          >
-        </div>
-
-        <div class="flex items-center space-x-2 w-full sm:w-auto justify-end">
-          <select id="source-filter" onchange="filterLeads()" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:outline-none focus:border-indigo-500">
-            <option value="all">All Sources</option>
-            <option value="Apollo">Apollo</option>
-            <option value="Smartlead">Smartlead</option>
-            <option value="Apify">Apify</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Table -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-left text-xs text-slate-300">
-          <thead class="bg-slate-900/60 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-700/60 font-semibold">
-            <tr>
-              <th class="py-3.5 px-4">Contact</th>
-              <th class="py-3.5 px-4">Brand / Company</th>
-              <th class="py-3.5 px-4">Verified Email</th>
-              <th class="py-3.5 px-4">Phone</th>
-              <th class="py-3.5 px-4">Location</th>
-              <th class="py-3.5 px-4">LinkedIn</th>
-              <th class="py-3.5 px-4">Source</th>
-              <th class="py-3.5 px-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="leads-tbody" class="divide-y divide-slate-700/40 font-medium">
-            <tr>
-              <td colspan="8" class="py-12 text-center text-slate-500">
-                <i class="fa-solid fa-inbox text-3xl mb-2 block text-slate-600"></i>
-                No leads scraped yet. Send a voice note on Telegram to prospect!
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Live Execution Logs -->
-    <div class="bg-slate-800/40 border border-slate-700/40 rounded-2xl p-5">
-      <div class="flex items-center justify-between mb-3">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Live Activity Feed
-        </h3>
-        <span class="text-[11px] text-slate-500">Auto-refreshed</span>
-      </div>
-      <div id="logs-container" class="space-y-2 max-h-48 overflow-y-auto text-xs font-mono text-slate-400 bg-slate-950/50 p-3 rounded-xl border border-slate-800">
-        <div class="text-slate-600">Waiting for queries...</div>
-      </div>
-    </div>
-  </main>
+  </div>
 
   <!-- Test Pitch Modal -->
-  <div id="test-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
-      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-sm font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-microphone text-indigo-400"></i> Test Pitch Simulation
-        </h3>
-        <button onclick="closeTestModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+  <div id="test-modal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-[36px] max-w-lg w-full p-7 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-full bg-[#eaf8ee] text-[#16a34a] flex items-center justify-center text-sm font-bold">
+            <i class="fa-solid fa-bolt"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Test Pitch Simulator</h3>
+            <p class="text-xs text-slate-400">Simulate a voice note or text pitch from browser</p>
+          </div>
+        </div>
+        <button onclick="closeTestModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
       </div>
 
       <div>
-        <label class="block text-xs font-medium text-slate-400 mb-1.5">Enter Voice Note or Text Pitch:</label>
+        <label class="block text-xs font-bold text-slate-700 mb-2">Pitch / Collaboration Idea:</label>
         <textarea 
           id="pitch-input" 
           rows="3" 
-          placeholder="e.g. I saw Nike in the metro and want to pitch an influencer collaboration for their sportswear campaign"
-          class="w-full bg-slate-950 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500"
+          placeholder="e.g. I saw Ather Energy in the metro and want to pitch a 50-50 partnership for EV charging stations in Pune to their head of marketing"
+          class="w-full bg-[#fbfbfa] border border-slate-200 rounded-2xl p-3.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#16a34a] transition"
         ></textarea>
       </div>
 
-      <div id="test-status" class="hidden text-xs p-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-300"></div>
+      <div id="test-status" class="hidden text-xs p-4 rounded-2xl bg-[#f8fafc] border border-slate-200 text-slate-700 space-y-1"></div>
 
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeTestModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-700">Cancel</button>
-        <button id="run-pitch-btn" onclick="runTestPitch()" class="px-4 py-2 rounded-xl bg-indigo-600 text-xs font-semibold text-white hover:bg-indigo-500 flex items-center gap-1.5">
+        <button onclick="closeTestModal()" class="px-5 py-2.5 rounded-full bg-slate-100 text-xs font-bold text-slate-600 hover:bg-slate-200 transition">
+          Cancel
+        </button>
+        <button id="run-pitch-btn" onclick="runTestPitch()" class="px-6 py-2.5 rounded-full bg-[#18181b] text-xs font-bold text-white hover:bg-black transition flex items-center gap-2 shadow-sm">
           <span>Run Pipeline</span>
         </button>
       </div>
     </div>
   </div>
 
+  <!-- JavaScript Application Logic -->
   <script>
     let allLeads = [];
+    let activeTab = 'prospects';
+    let selectedRowId = null;
+
+    function switchTab(tab) {
+      activeTab = tab;
+
+      // Tab contents
+      document.getElementById('tab-prospects-content').classList.toggle('hidden', tab !== 'prospects');
+      document.getElementById('tab-overview-content').classList.toggle('hidden', tab !== 'overview');
+      document.getElementById('tab-logs-content').classList.toggle('hidden', tab !== 'logs');
+
+      // Nav pills
+      const tabs = ['prospects', 'overview', 'logs'];
+      tabs.forEach(t => {
+        const btn = document.getElementById(`nav-${t}`);
+        if (btn) {
+          if (t === tab) {
+            btn.className = 'bg-[#18181b] text-white font-medium px-5 py-2 rounded-full shadow-sm transition';
+          } else {
+            btn.className = 'text-slate-600 hover:text-slate-950 font-medium px-4 py-2 rounded-full transition';
+          }
+        }
+      });
+    }
 
     async function fetchData() {
       try {
@@ -200,10 +380,10 @@
         const stats = await statsRes.json();
         const logs = await logsRes.json();
 
-        // Render stats
-        document.getElementById('stat-total').textContent = stats.totalLeads || 0;
-        document.getElementById('stat-verified').textContent = stats.verifiedEmails || 0;
-        document.getElementById('stat-queries').textContent = stats.totalQueries || 0;
+        // Update top badges
+        document.getElementById('badge-total-leads').textContent = allLeads.length || 0;
+        document.getElementById('overview-total').textContent = allLeads.length || 0;
+        document.getElementById('overview-queries').textContent = stats.totalQueries || 0;
 
         renderLeads(allLeads);
         renderLogs(logs);
@@ -212,83 +392,147 @@
       }
     }
 
+    // Avatar color palettes for clean visual presentation
+    const avatarGradients = [
+      'from-emerald-400 to-green-600',
+      'from-blue-400 to-indigo-600',
+      'from-amber-400 to-orange-600',
+      'from-rose-400 to-pink-600',
+      'from-teal-400 to-cyan-600'
+    ];
+
+    function getInitials(name) {
+      if (!name) return 'TC';
+      const parts = name.trim().split(/\s+/);
+      if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+
     function renderLeads(leads) {
       const tbody = document.getElementById('leads-tbody');
       if (!leads || leads.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="8" class="py-12 text-center text-slate-500">
-              <i class="fa-solid fa-inbox text-3xl mb-2 block text-slate-600"></i>
-              No leads found. Send a voice note to the Telegram Bot!
+            <td colspan="9" class="py-16 text-center text-slate-400">
+              <div class="w-12 h-12 rounded-full bg-[#f0fdf4] text-[#16a34a] flex items-center justify-center mx-auto mb-2 text-lg">
+                <i class="fa-solid fa-microphone"></i>
+              </div>
+              <p class="font-semibold text-slate-700 text-sm">No scraped prospects yet</p>
+              <p class="text-xs text-slate-400 mt-0.5">Send a voice note to @Aasha_mehtabot on Telegram or click "+ Test Pitch"!</p>
             </td>
           </tr>
         `;
         return;
       }
 
-      tbody.innerHTML = leads.map(l => `
-        <tr class="hover:bg-slate-800/40 transition">
-          <td class="py-3.5 px-4">
-            <div class="font-bold text-white">${escapeHtml(l.name)}</div>
-            <div class="text-[11px] text-slate-400 truncate max-w-[200px]">${escapeHtml(l.title || 'Decision Maker')}</div>
-          </td>
-          <td class="py-3.5 px-4">
-            <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 font-semibold text-[11px]">
-              ${escapeHtml(l.brand || '-')}
-            </span>
-          </td>
-          <td class="py-3.5 px-4 font-mono">
-            <div class="flex items-center gap-1.5">
-              <span class="text-emerald-400 font-semibold">${escapeHtml(l.email)}</span>
-              <span class="px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px]">Verified</span>
-            </div>
-          </td>
-          <td class="py-3.5 px-4 text-slate-400">
-            ${escapeHtml(l.phone || 'Not Available')}
-          </td>
-          <td class="py-3.5 px-4 text-slate-300">
-            ${escapeHtml(l.city || 'Not Available')}
-          </td>
-          <td class="py-3.5 px-4">
-            ${l.linkedinUrl && l.linkedinUrl !== 'Not Available' ? `
-              <a href="${escapeHtml(l.linkedinUrl)}" target="_blank" class="inline-flex items-center gap-1 text-sky-400 hover:text-sky-300 hover:underline">
-                <i class="fa-brands fa-linkedin"></i> Profile
-              </a>
-            ` : '<span class="text-slate-500">N/A</span>'}
-          </td>
-          <td class="py-3.5 px-4">
-            <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold border ${
-              l.source === 'Apollo' ? 'bg-amber-500/10 text-amber-300 border-amber-500/30' :
-              l.source === 'Smartlead' ? 'bg-purple-500/10 text-purple-300 border-purple-500/30' :
-              'bg-blue-500/10 text-blue-300 border-blue-500/30'
-            }">
-              ${escapeHtml(l.source || 'Apollo')}
-            </span>
-          </td>
-          <td class="py-3.5 px-4 text-right">
-            <button onclick="copyToClipboard('${escapeHtml(l.email)}')" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700" title="Copy Email">
-              <i class="fa-regular fa-copy text-xs"></i>
-            </button>
-          </td>
-        </tr>
-      `).join('');
+      tbody.innerHTML = leads.map((l, index) => {
+        const initials = getInitials(l.name);
+        const grad = avatarGradients[index % avatarGradients.length];
+        const isSelected = selectedRowId === l.id;
+
+        return `
+          <tr onclick="selectRow('${l.id}')" class="transition cursor-pointer ${isSelected ? 'active-row-green shadow-sm' : 'hover:bg-slate-50/80'}">
+            <td class="py-3.5 px-3">
+              <input type="checkbox" ${isSelected ? 'checked' : ''} class="rounded border-slate-300 text-[#16a34a] focus:ring-[#16a34a]">
+            </td>
+            
+            <!-- Contact Name & Avatar -->
+            <td class="py-3.5 px-4">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-tr ${grad} text-white font-bold text-[11px] flex items-center justify-center shadow-xs">
+                  ${initials}
+                </div>
+                <div>
+                  <div class="font-bold text-slate-900">${escapeHtml(l.name)}</div>
+                  ${l.linkedinUrl && l.linkedinUrl !== 'Not Available' ? `
+                    <a href="${escapeHtml(l.linkedinUrl)}" target="_blank" onclick="event.stopPropagation()" class="text-[10px] text-sky-600 hover:text-sky-700 font-medium inline-flex items-center gap-1">
+                      <i class="fa-brands fa-linkedin text-[11px]"></i> Profile
+                    </a>
+                  ` : ''}
+                </div>
+              </div>
+            </td>
+
+            <!-- Job Title -->
+            <td class="py-3.5 px-4 text-slate-700">
+              <span class="truncate block max-w-[180px]">${escapeHtml(l.title || 'Decision Maker')}</span>
+            </td>
+
+            <!-- Brand / Company -->
+            <td class="py-3.5 px-4 font-semibold text-slate-800">
+              <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-slate-100 text-slate-800 text-[11px]">
+                ${escapeHtml(l.brand || '-')}
+              </span>
+            </td>
+
+            <!-- Location / City -->
+            <td class="py-3.5 px-4 text-slate-600">
+              <div class="flex items-center gap-1.5">
+                <i class="fa-solid fa-location-dot text-slate-400 text-[10px]"></i>
+                <span>${escapeHtml(l.city || 'Not Available')}</span>
+              </div>
+            </td>
+
+            <!-- Verified Email -->
+            <td class="py-3.5 px-4 font-mono text-[11px]">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-[#16a34a]">${escapeHtml(l.email)}</span>
+                <button onclick="copyToClipboard('${escapeHtml(l.email)}'); event.stopPropagation();" class="text-slate-400 hover:text-slate-700 p-0.5" title="Copy">
+                  <i class="fa-regular fa-copy text-[10px]"></i>
+                </button>
+              </div>
+            </td>
+
+            <!-- Phone -->
+            <td class="py-3.5 px-4 text-slate-500 font-mono text-[11px]">
+              ${escapeHtml(l.phone || 'Not Available')}
+            </td>
+
+            <!-- Status (Exact dot-pill design from reference) -->
+            <td class="py-3.5 px-4 text-center">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf8ee] text-[#16a34a] font-bold text-[10px]">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
+                Verified
+              </span>
+            </td>
+
+            <!-- Actions -->
+            <td class="py-3.5 px-4 text-right">
+              <span class="text-[10px] font-semibold text-slate-400 bg-slate-100 px-2 py-0.5 rounded-md">
+                ${escapeHtml(l.source || 'Apify')}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function selectRow(id) {
+      selectedRowId = (selectedRowId === id) ? null : id;
+      renderLeads(allLeads);
     }
 
     function renderLogs(logs) {
       const container = document.getElementById('logs-container');
       if (!logs || logs.length === 0) return;
-      container.innerHTML = logs.slice(0, 15).map(log => `
-        <div class="flex items-start gap-2">
-          <span class="text-slate-600 text-[10px] whitespace-nowrap">${new Date(log.timestamp).toLocaleTimeString()}</span>
-          <span class="text-emerald-400 font-semibold text-[10px]">[${escapeHtml(log.type)}]</span>
-          <span class="text-slate-300 truncate">${escapeHtml(log.message)}</span>
+
+      container.innerHTML = logs.slice(0, 30).map(log => `
+        <div class="p-3 bg-[#fbfbfa] rounded-2xl border border-slate-100 flex items-start gap-3 shadow-2xs">
+          <span class="text-slate-400 text-[10px] whitespace-nowrap mt-0.5">${new Date(log.timestamp).toLocaleTimeString()}</span>
+          <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
+            log.type.includes('found') ? 'bg-[#eaf8ee] text-[#16a34a]' :
+            log.type.includes('started') ? 'bg-blue-50 text-blue-700' :
+            'bg-slate-100 text-slate-700'
+          }">${escapeHtml(log.type)}</span>
+          <span class="text-slate-700 text-xs flex-1">${escapeHtml(log.message)}</span>
         </div>
       `).join('');
     }
 
     function filterLeads() {
       const q = document.getElementById('search-input').value.toLowerCase();
-      const src = document.getElementById('source-filter').value;
+      const src = document.getElementById('filter-source').value;
+      const city = document.getElementById('filter-city').value;
 
       const filtered = allLeads.filter(l => {
         const matchesQuery = 
@@ -299,7 +543,9 @@
           (l.city && l.city.toLowerCase().includes(q));
 
         const matchesSource = src === 'all' || l.source === src;
-        return matchesQuery && matchesSource;
+        const matchesCity = city === 'all' || (l.city && l.city.toLowerCase().includes(city.toLowerCase()));
+
+        return matchesQuery && matchesSource && matchesCity;
       });
 
       renderLeads(filtered);
@@ -330,7 +576,7 @@
       const btn = document.getElementById('run-pitch-btn');
 
       statusEl.classList.remove('hidden');
-      statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Running waterfall pipeline...';
+      statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5 text-[#16a34a]"></i> Running intelligent waterfall pipeline...';
       btn.disabled = true;
 
       try {
@@ -343,19 +589,21 @@
         
         if (result.lead) {
           statusEl.innerHTML = `
-            <div class="text-emerald-400 font-bold mb-1">✅ Verified Lead Found!</div>
-            <div><b>Name:</b> ${result.lead.name}</div>
-            <div><b>Email:</b> ${result.lead.email} (Verified)</div>
-            <div><b>LinkedIn:</b> ${result.lead.linkedinUrl}</div>
-            <div><b>City:</b> ${result.lead.city}</div>
+            <div class="text-[#16a34a] font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-circle-check"></i> Verified Lead Discovered!
+            </div>
+            <div class="mt-1"><b>Name:</b> ${escapeHtml(result.lead.name)}</div>
+            <div><b>Email:</b> <span class="font-mono text-[#16a34a] font-bold">${escapeHtml(result.lead.email)}</span> (Verified)</div>
+            <div><b>Company:</b> ${escapeHtml(result.lead.brand || '-')}</div>
+            <div><b>City:</b> ${escapeHtml(result.lead.city || 'Not Available')}</div>
           `;
         } else {
-          statusEl.innerHTML = '<span class="text-amber-400">Sorry, no contact details found.</span>';
+          statusEl.innerHTML = '<span class="text-amber-600 font-medium">Sorry, no contact details found.</span>';
         }
 
         fetchData();
       } catch (err) {
-        statusEl.innerHTML = `<span class="text-rose-400">Error: ${err.message}</span>`;
+        statusEl.innerHTML = `<span class="text-rose-600 font-medium">Error: ${err.message}</span>`;
       } finally {
         btn.disabled = false;
       }
@@ -370,9 +618,9 @@
         .replace(/"/g, '&quot;');
     }
 
-    // Auto poll every 5s
+    // Initialize and auto-refresh
     fetchData();
-    setInterval(fetchData, 5000);
+    setInterval(fetchData, 6000);
   </script>
 </body>
 </html>
