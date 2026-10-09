@@ -2,9 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const config = require('./config');
-const { getLeads, getStats, getLogs, saveLead, addLog } = require('./db');
+const { getLeads, getStats, getLogs, saveLead, addLog, getEmails, saveEmail, updateEmailStatus } = require('./db');
 const { analyzePitch } = require('./services/intelligence');
 const { executeWaterfall } = require('./services/waterfall');
+const { writeHumanizedEmail } = require('./services/emailWriter');
+const { sendApprovedEmail } = require('./services/emailSender');
 
 const app = express();
 app.use(cors());
@@ -27,6 +29,89 @@ app.get('/api/stats', (req, res) => {
 // API: Get Activity Logs
 app.get('/api/logs', (req, res) => {
   res.json(getLogs());
+});
+
+// API: Get Drafted & Sent Emails
+app.get('/api/emails', (req, res) => {
+  res.json(getEmails());
+});
+
+// API: Draft an email using Groq LLM
+app.post('/api/emails/draft', async (req, res) => {
+  const { lead, pitchText } = req.body;
+  if (!lead || !lead.email || !pitchText) {
+    return res.status(400).json({ error: 'Lead details and pitchText are required' });
+  }
+
+  try {
+    const draftContent = await writeHumanizedEmail({
+      lead,
+      userPitch: pitchText,
+      senderCompany: 'Time Charge'
+    });
+
+    const savedDraft = saveEmail({
+      leadId: lead.id,
+      leadName: lead.name,
+      to: lead.email,
+      brand: lead.brand,
+      pitchTranscript: pitchText,
+      subject: draftContent.subject,
+      body: draftContent.body,
+      status: 'draft'
+    });
+
+    addLog('email_drafted', `Web UI drafted email for ${lead.name} (${lead.email})`, {
+      draftId: savedDraft.id,
+      subject: draftContent.subject
+    });
+
+    res.json({ success: true, draft: savedDraft });
+  } catch (err) {
+    console.error('Error drafting email:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// API: Approve & Send an email
+app.post('/api/emails/send', async (req, res) => {
+  const { draftId, to, subject, body } = req.body;
+  if (!to || !subject || !body) {
+    return res.status(400).json({ error: 'to, subject, and body are required' });
+  }
+
+  try {
+    const result = await sendApprovedEmail({ to, subject, text: body });
+    const newStatus = result.sent ? 'sent' : 'approved';
+
+    if (draftId) {
+      updateEmailStatus(draftId, newStatus, {
+        subject,
+        body,
+        sentAt: new Date().toISOString(),
+        simulated: result.simulated,
+        messageId: result.messageId || null
+      });
+    } else {
+      saveEmail({
+        to,
+        subject,
+        body,
+        status: newStatus,
+        sentAt: new Date().toISOString(),
+        simulated: result.simulated
+      });
+    }
+
+    addLog('email_sent', `Web UI approved email to ${to} (${result.sent ? 'Dispatched' : 'Logged'})`, {
+      simulated: result.simulated
+    });
+
+    res.json({ success: true, result });
+  } catch (err) {
+    console.error('Error sending email:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // API: Export to CSV
@@ -64,6 +149,9 @@ app.post('/api/test-pitch', async (req, res) => {
   addLog('query_received', `Dashboard web test pitch: "${text}"`);
 
   try {
+    const analysis = await analyzePitch(text);
+    console.log('[Dashboard Test Analysis]', analysis);
+
     const searchRoles = [];
     if (Array.isArray(analysis.explicitRoles) && analysis.explicitRoles.length > 0) {
       for (const r of analysis.explicitRoles) {

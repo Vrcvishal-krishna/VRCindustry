@@ -63,9 +63,41 @@ function addLog(type, message, details = {}) {
   return entry;
 }
 
+const EMAILS_FILE = path.join(DATA_DIR, 'emails.json');
+
+function getEmails() {
+  return readJSON(EMAILS_FILE, []);
+}
+
+function saveEmail(emailData) {
+  const emails = getEmails();
+  const entry = {
+    id: `email_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+    timestamp: new Date().toISOString(),
+    status: emailData.status || 'draft', // draft | approved | sent | failed
+    ...emailData
+  };
+  emails.unshift(entry);
+  writeJSON(EMAILS_FILE, emails);
+  return entry;
+}
+
+function updateEmailStatus(id, status, details = {}) {
+  const emails = getEmails();
+  const email = emails.find(e => e.id === id);
+  if (email) {
+    email.status = status;
+    email.updatedAt = new Date().toISOString();
+    Object.assign(email, details);
+    writeJSON(EMAILS_FILE, emails);
+  }
+  return email;
+}
+
 function getStats() {
   const leads = getLeads();
   const logs = getLogs();
+  const emails = getEmails();
   
   const sources = {};
   leads.forEach(l => {
@@ -77,6 +109,8 @@ function getStats() {
     totalLeads: leads.length,
     verifiedEmails: leads.filter(l => l.email && l.emailStatus === 'verified').length,
     totalQueries: logs.filter(l => l.type === 'query_received').length,
+    totalEmailsDrafted: emails.length,
+    totalEmailsSent: emails.filter(e => e.status === 'sent' || e.status === 'approved').length,
     sources
   };
 }
@@ -86,5 +120,8 @@ module.exports = {
   saveLead,
   getLogs,
   addLog,
-  getStats
+  getStats,
+  getEmails,
+  saveEmail,
+  updateEmailStatus
 };
