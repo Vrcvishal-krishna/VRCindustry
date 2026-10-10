@@ -4,7 +4,7 @@ const { analyzePitch } = require('./services/intelligence');
 const { executeWaterfall } = require('./services/waterfall');
 const { writeHumanizedEmail } = require('./services/emailWriter');
 const { sendApprovedEmail } = require('./services/emailSender');
-const { saveLead, addLog, getEmails, saveEmail, updateEmailStatus } = require('./db');
+const { saveLead, addLog, getEmails, saveEmail, updateEmailStatus, deleteEmail } = require('./db');
 
 let isPolling = false;
 let lastUpdateId = 0;
@@ -12,6 +12,14 @@ let lastUpdateId = 0;
 // In-memory conversation state per Telegram chatId
 // Map<chatId, { lastLead, pendingDraft, awaitingPitch }>
 const chatSessions = new Map();
+
+function escapeHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
 
 async function sendMessage(chatId, text, parseMode = null, replyMarkup = null) {
   try {
@@ -55,11 +63,16 @@ async function editMessageText(chatId, messageId, text, parseMode = null, replyM
     if (parseMode) payload.parse_mode = parseMode;
     if (replyMarkup) payload.reply_markup = replyMarkup;
 
-    await fetch(`https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}/editMessageText`, {
+    const res = await fetch(`https://api.telegram.org/bot${config.TELEGRAM_BOT_TOKEN}/editMessageText`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
+    const data = await res.json();
+    if (!data.ok) {
+      console.warn('[Telegram] editMessageText non-ok response:', data);
+    }
+    return data;
   } catch (err) {
     console.error('[Telegram] Failed to edit message text:', err.message);
   }
@@ -153,7 +166,7 @@ async function handleMessage(msg) {
       const audioBuffer = await downloadTelegramFile(msg.voice.file_id);
       rawText = await transcribeAudio(audioBuffer, 'voice.oga');
       console.log(`[Transcription] Result: "${rawText}"`);
-      await sendMessage(chatId, `📝 *Transcribed:* "${rawText}"`, 'Markdown');
+      await sendMessage(chatId, `📝 <b>Transcribed:</b> <i>"${escapeHtml(rawText)}"</i>`, 'HTML');
     } catch (err) {
       console.error('[Speech] Error transcribing:', err.message);
       await sendMessage(chatId, `⚠️ Could not process voice note: ${err.message}`);
@@ -161,14 +174,15 @@ async function handleMessage(msg) {
     }
   } else if (msg.text) {
     if (msg.text.startsWith('/start')) {
+      const sender = config.SMTP_USER || 'vishal@vrcindustry.com';
       await sendMessage(chatId, 
-        `👋 *Welcome to Time Charge Autonomous Prospecting & Email Outreach!*\n\n` +
-        `Send me a *voice note* anytime you spot a brand:\n` +
-        `_"I saw Brand X and have an idea to collaborate on marketing..."_\n\n` +
-        `🚀 *Two-Step Autonomous Flow:*\n` +
-        `1. *Discover Contact:* AI identifies the decision maker & verifies their direct email (100% verified, 0% catch-all).\n` +
-        `2. *Voice-to-Email:* Speak your idea/pitch ➔ AI drafts a humanized B2B email ➔ Asks for your approval before sending!`,
-        'Markdown'
+        `👋 <b>Welcome to Time Charge Autonomous Prospecting & Email Outreach!</b>\n\n` +
+        `Send me a <b>voice note</b> anytime you spot a brand:\n` +
+        `<i>"I saw Brand X and have an idea to collaborate on EV charging..."</i>\n\n` +
+        `🚀 <b>Autonomous Two-Step Flow:</b>\n` +
+        `1. <b>Discover Contact:</b> AI verifies direct email (100% verified, 0% catch-all).\n` +
+        `2. <b>Voice-to-Email:</b> Speak what to say ➔ AI writes humanized email ➔ Review & Send from <code>${escapeHtml(sender)}</code>!`,
+        'HTML'
       );
       return;
     }
@@ -190,7 +204,7 @@ async function handleMessage(msg) {
     const { isPitchForCurrentLead } = await classifyIntent(rawText, session.lastLead);
     
     if (isPitchForCurrentLead) {
-      await sendMessage(chatId, `✍️ *Drafting humanized email for ${session.lastLead.name}...*`, 'Markdown');
+      await sendMessage(chatId, `✍️ <b>Drafting humanized email for ${escapeHtml(session.lastLead.name)}...</b>`, 'HTML');
 
       try {
         const draftContent = await writeHumanizedEmail({
@@ -218,13 +232,15 @@ async function handleMessage(msg) {
           subject: draftContent.subject
         });
 
+        const senderEmail = config.SMTP_USER || 'vishal@vrcindustry.com';
         const previewMsg = 
-          `✉️ *AI Humanized Email Draft:*\n\n` +
-          `*To:* \`${session.lastLead.email}\`\n` +
-          `*Subject:* ${draftContent.subject}\n\n` +
-          `${draftContent.body}\n\n` +
+          `✉️ <b>AI Humanized Email Draft:</b>\n\n` +
+          `<b>From:</b> <code>${escapeHtml(senderEmail)}</code> (Hostinger)\n` +
+          `<b>To:</b> <code>${escapeHtml(session.lastLead.email)}</code>\n` +
+          `<b>Subject:</b> ${escapeHtml(draftContent.subject)}\n\n` +
+          `${escapeHtml(draftContent.body)}\n\n` +
           `─────────────────────────\n` +
-          `*Shall I send this email to ${session.lastLead.name}?*`;
+          `<b>Shall I send this email to ${escapeHtml(session.lastLead.name)}?</b>`;
 
         const keyboard = {
           inline_keyboard: [
@@ -235,7 +251,7 @@ async function handleMessage(msg) {
           ]
         };
 
-        await sendMessage(chatId, previewMsg, 'Markdown', keyboard);
+        await sendMessage(chatId, previewMsg, 'HTML', keyboard);
         return;
       } catch (err) {
         console.error('[EmailWriter] Error drafting email:', err);
@@ -279,14 +295,14 @@ async function handleMessage(msg) {
 
   const personaLabel = searchRoles.slice(0, 2).join(' / ') || 'Partnerships Lead';
   const routingMsg = analysis.requiresPhone 
-    ? `🔍 *Phone requested* ➔ Routing to Apollo for direct phone & verified email...`
-    : `🔍 *Email requested* ➔ Routing to Apify (Zero Apollo Credits used)...`;
+    ? `🔍 <b>Phone requested</b> ➔ Routing to Apollo for direct phone & verified email...`
+    : `🔍 <b>Email requested</b> ➔ Routing to Apify (Zero Apollo Credits used)...`;
 
   await sendMessage(chatId, 
-    `🎯 *Brand Identified:* ${analysis.brand}\n` +
-    `👤 *Target Role:* ${personaLabel}\n` +
+    `🎯 <b>Brand Identified:</b> ${escapeHtml(analysis.brand)}\n` +
+    `👤 <b>Target Role:</b> ${escapeHtml(personaLabel)}\n` +
     `${routingMsg}`, 
-    'Markdown'
+    'HTML'
   );
 
   try {
@@ -330,9 +346,9 @@ async function handleMessage(msg) {
 
       // 2. Offer one-click voice-to-email drafting
       const pitchPrompt = 
-        `🎙️ *Want to reach out to ${lead.name}?*\n` +
-        `Reply with a *voice note* (or text) explaining your pitch or collaboration idea!\n` +
-        `AI will craft a humanized, zero-cliché B2B email and get your approval before sending.`;
+        `🎙️ <b>Want to reach out to ${escapeHtml(lead.name)}?</b>\n` +
+        `Reply with a <b>voice note</b> (or text) explaining your pitch or collaboration idea!\n` +
+        `AI will craft a humanized, zero-cliché B2B email and get your approval before sending from <code>${escapeHtml(config.SMTP_USER || 'vishal@vrcindustry.com')}</code>.`;
 
       const keyboard = {
         inline_keyboard: [
@@ -342,7 +358,7 @@ async function handleMessage(msg) {
         ]
       };
 
-      await sendMessage(chatId, pitchPrompt, 'Markdown', keyboard);
+      await sendMessage(chatId, pitchPrompt, 'HTML', keyboard);
     } else {
       await sendMessage(chatId, 'Sorry, no contact details found.');
     }
@@ -361,21 +377,28 @@ async function handleCallbackQuery(cq) {
     await answerCallbackQuery(cq.id, 'Ready for your pitch!');
     const session = chatSessions.get(chatId);
     const leadName = (session && session.lastLead) ? session.lastLead.name : 'this contact';
-    await sendMessage(chatId, `🎙️ *Go ahead!* Send a voice note or type what you want to propose to ${leadName}.`, 'Markdown');
+    await sendMessage(chatId, `🎙️ <b>Go ahead!</b> Send a voice note or type what you want to propose to ${escapeHtml(leadName)}.`, 'HTML');
     return;
   }
 
   if (data.startsWith('approve_draft_')) {
     const draftId = data.replace('approve_draft_', '');
     const emails = getEmails();
-    const draft = emails.find(e => e.id === draftId);
+    let draft = emails.find(e => e.id === draftId);
+
+    // Fallback to in-memory session if file was re-read
+    const session = chatSessions.get(chatId);
+    if (!draft && session && session.pendingDraft && session.pendingDraft.id === draftId) {
+      draft = session.pendingDraft;
+    }
 
     if (!draft) {
       await answerCallbackQuery(cq.id, 'Draft not found or expired.');
+      await editMessageText(chatId, messageId, '⚠️ <b>Draft not found or expired.</b> Please send your pitch again to generate a fresh draft.', 'HTML');
       return;
     }
 
-    await answerCallbackQuery(cq.id, 'Sending email...');
+    await answerCallbackQuery(cq.id, 'Sending email via Hostinger...');
 
     try {
       const result = await sendApprovedEmail({
@@ -396,24 +419,25 @@ async function handleCallbackQuery(cq) {
         simulated: result.simulated
       });
 
+      const senderEmail = config.SMTP_USER || 'vishal@vrcindustry.com';
       const confirmText = result.sent
-        ? `🚀 *Email Sent Successfully!*\nDelivered to: \`${draft.to}\`\n\n*Subject:* ${draft.subject}`
-        : `✅ *Email Approved & Saved!*\nRecipient: \`${draft.to}\`\n\n*(Note: Configure SMTP_USER and SMTP_PASS in Render environment variables to send live emails directly from your inbox).*`;
+        ? `🚀 <b>Email Sent Successfully!</b>\n\n<b>From:</b> <code>${escapeHtml(senderEmail)}</code> (Hostinger)\n<b>To:</b> <code>${escapeHtml(draft.to)}</code>\n\n<b>Subject:</b> ${escapeHtml(draft.subject)}`
+        : `✅ <b>Email Approved & Saved!</b>\n\n<b>Linked Sender:</b> <code>${escapeHtml(senderEmail)}</code> (Hostinger)\n<b>Recipient:</b> <code>${escapeHtml(draft.to)}</code>\n<b>Subject:</b> ${escapeHtml(draft.subject)}\n\n⚠️ <i>Note: To dispatch live emails automatically, please configure your Hostinger email password (<code>SMTP_PASS</code>) in Render Environment Variables or in Dashboard Settings.</i>`;
 
-      await editMessageText(chatId, messageId, confirmText, 'Markdown');
+      await editMessageText(chatId, messageId, confirmText, 'HTML');
     } catch (err) {
       console.error('[Bot] Error dispatching email:', err);
       updateEmailStatus(draftId, 'failed', { error: err.message });
-      await sendMessage(chatId, `⚠️ Could not send email: ${err.message}`);
+      await editMessageText(chatId, messageId, `⚠️ <b>Could not send email:</b>\n${escapeHtml(err.message)}`, 'HTML');
     }
     return;
   }
 
   if (data.startsWith('discard_draft_')) {
     const draftId = data.replace('discard_draft_', '');
-    updateEmailStatus(draftId, 'discarded');
-    await answerCallbackQuery(cq.id, 'Draft discarded.');
-    await editMessageText(chatId, messageId, '❌ *Email draft discarded.*', 'Markdown');
+    deleteEmail(draftId);
+    await answerCallbackQuery(cq.id, 'Draft discarded and removed.');
+    await editMessageText(chatId, messageId, '❌ <b>Email draft discarded and deleted.</b>', 'HTML');
     return;
   }
 }

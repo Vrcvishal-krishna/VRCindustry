@@ -2,11 +2,22 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const config = require('./config');
-const { getLeads, getStats, getLogs, saveLead, addLog, getEmails, saveEmail, updateEmailStatus } = require('./db');
+const { 
+  getLeads, 
+  getStats, 
+  getLogs, 
+  saveLead, 
+  deleteLead,
+  addLog, 
+  getEmails, 
+  saveEmail, 
+  updateEmailStatus,
+  deleteEmail 
+} = require('./db');
 const { analyzePitch } = require('./services/intelligence');
 const { executeWaterfall } = require('./services/waterfall');
 const { writeHumanizedEmail } = require('./services/emailWriter');
-const { sendApprovedEmail } = require('./services/emailSender');
+const { sendApprovedEmail, verifySmtpConnection } = require('./services/emailSender');
 
 const app = express();
 app.use(cors());
@@ -19,6 +30,18 @@ app.get('/health', (req, res) => res.status(200).json({ status: 'healthy', uptim
 // API: Get Leads
 app.get('/api/leads', (req, res) => {
   res.json(getLeads());
+});
+
+// API: Delete a Lead
+app.delete('/api/leads/:id', (req, res) => {
+  const { id } = req.params;
+  const deleted = deleteLead(id);
+  if (deleted) {
+    addLog('lead_deleted', `Deleted prospect: ${id}`);
+    res.json({ success: true, id });
+  } else {
+    res.status(404).json({ error: 'Lead not found' });
+  }
 });
 
 // API: Get Stats
@@ -34,6 +57,18 @@ app.get('/api/logs', (req, res) => {
 // API: Get Drafted & Sent Emails
 app.get('/api/emails', (req, res) => {
   res.json(getEmails());
+});
+
+// API: Delete an Email Draft
+app.delete('/api/emails/:id', (req, res) => {
+  const { id } = req.params;
+  const deleted = deleteEmail(id);
+  if (deleted) {
+    addLog('email_deleted', `Deleted email draft: ${id}`);
+    res.json({ success: true, id });
+  } else {
+    res.status(404).json({ error: 'Email draft not found' });
+  }
 });
 
 // API: Draft an email using Groq LLM
@@ -103,14 +138,47 @@ app.post('/api/emails/send', async (req, res) => {
       });
     }
 
-    addLog('email_sent', `Web UI approved email to ${to} (${result.sent ? 'Dispatched' : 'Logged'})`, {
-      simulated: result.simulated
+    addLog('email_sent', `Outreach email to ${to} (${result.sent ? 'Dispatched via Hostinger' : 'Saved/Pending Hostinger Password'})`, {
+      simulated: result.simulated,
+      from: config.SMTP_USER || 'vishal@vrcindustry.com'
     });
 
     res.json({ success: true, result });
   } catch (err) {
     console.error('Error sending email:', err);
     res.status(500).json({ error: err.message });
+  }
+});
+
+// API: Get SMTP Settings (safe, without leaking full password)
+app.get('/api/settings', (req, res) => {
+  res.json({
+    smtpHost: config.SMTP_HOST || 'smtp.hostinger.com',
+    smtpPort: config.SMTP_PORT || '465',
+    smtpUser: config.SMTP_USER || 'vishal@vrcindustry.com',
+    emailFrom: config.EMAIL_FROM || '"Vishal | Time Charge" <vishal@vrcindustry.com>',
+    hasPassword: Boolean(config.SMTP_PASS)
+  });
+});
+
+// API: Save SMTP Settings (allows setting password directly from Web UI)
+app.post('/api/settings', (req, res) => {
+  const { smtpPass } = req.body;
+  if (typeof smtpPass === 'string' && smtpPass.trim()) {
+    config.SMTP_PASS = smtpPass.trim();
+    process.env.SMTP_PASS = smtpPass.trim();
+    addLog('settings_updated', 'Hostinger SMTP password updated');
+  }
+  res.json({ success: true, hasPassword: Boolean(config.SMTP_PASS) });
+});
+
+// API: Test Hostinger SMTP Connection
+app.post('/api/test-smtp', async (req, res) => {
+  try {
+    const result = await verifySmtpConnection();
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
   }
 });
 

@@ -94,6 +94,22 @@ function updateEmailStatus(id, status, details = {}) {
   return email;
 }
 
+function deleteEmail(id) {
+  let emails = getEmails();
+  const initialLength = emails.length;
+  emails = emails.filter(e => e.id !== id);
+  writeJSON(EMAILS_FILE, emails);
+  return emails.length < initialLength;
+}
+
+function deleteLead(id) {
+  let leads = getLeads();
+  const initialLength = leads.length;
+  leads = leads.filter(l => l.id !== id);
+  writeJSON(LEADS_FILE, leads);
+  return leads.length < initialLength;
+}
+
 function getStats() {
   const leads = getLeads();
   const logs = getLogs();
@@ -118,10 +134,12 @@ function getStats() {
 module.exports = {
   getLeads,
   saveLead,
+  deleteLead,
   getLogs,
   addLog,
   getStats,
   getEmails,
   saveEmail,
-  updateEmailStatus
+  updateEmailStatus,
+  deleteEmail
 };

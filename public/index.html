@@ -82,13 +82,14 @@
 
     <!-- Right Controls -->
     <div class="flex items-center space-x-2.5 text-slate-700">
-      <button onclick="openTestModal()" class="hidden sm:flex items-center gap-1.5 bg-white border border-slate-200 px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-slate-50 transition shadow-xs">
-        <i class="fa-solid fa-gear text-slate-400"></i> Settings
+      <button onclick="openSettingsModal()" class="flex items-center gap-1.5 bg-white border border-slate-200 px-3.5 py-2 rounded-full text-xs font-semibold hover:bg-slate-50 transition shadow-xs" title="Email & SMTP Settings">
+        <i class="fa-solid fa-gear text-slate-500"></i>
+        <span>Settings</span>
       </button>
       <button onclick="fetchData()" class="w-9 h-9 rounded-full bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition shadow-xs text-slate-600" title="Refresh">
         <i class="fa-solid fa-rotate text-xs text-[#16a34a]"></i>
       </button>
-      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#16a34a] to-emerald-300 text-slate-950 font-bold text-xs flex items-center justify-center shadow-xs border-2 border-white">
+      <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-[#16a34a] to-emerald-300 text-slate-950 font-bold text-xs flex items-center justify-center shadow-xs border-2 border-white" title="Hostinger Account Linked">
         TC
       </div>
     </div>
@@ -155,12 +156,12 @@
 
         <!-- Quick Filter Indicators -->
         <div class="flex items-center space-x-2 text-xs font-semibold text-slate-700">
-          <span class="text-slate-400 text-xs font-normal">Active Protocol:</span>
-          <span class="bg-white border border-slate-200/90 px-3.5 py-1.5 rounded-full text-slate-800 text-xs font-semibold flex items-center gap-1.5 shadow-2xs">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span> 0% Catch-All Filter
+          <span class="text-slate-400 text-xs font-normal">Sender Linked:</span>
+          <span class="bg-white border border-slate-200/90 px-3.5 py-1.5 rounded-full text-slate-800 text-xs font-semibold flex items-center gap-1.5 shadow-2xs font-mono">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span> vishal@vrcindustry.com
           </span>
           <span class="bg-white border border-slate-200/90 px-3.5 py-1.5 rounded-full text-slate-800 text-xs font-semibold flex items-center gap-1.5 shadow-2xs">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Groq Humanized AI
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span> Hostinger SMTP
           </span>
         </div>
       </div>
@@ -223,7 +224,7 @@
                 <th class="py-3 px-4 font-normal text-slate-400">Verified Email</th>
                 <th class="py-3 px-4 font-normal text-slate-400">Phone</th>
                 <th class="py-3 px-4 font-normal text-slate-400 text-center">Status</th>
-                <th class="py-3 px-4 font-normal text-slate-400 text-right">Outreach</th>
+                <th class="py-3 px-4 font-normal text-slate-400 text-right">Actions</th>
               </tr>
             </thead>
             <tbody id="leads-tbody" class="divide-y divide-slate-100/80 font-medium text-slate-700">
@@ -247,15 +248,20 @@
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-[32px] sm:text-[36px] font-bold tracking-tight text-slate-900">Campaign Outreach Emails</h1>
-          <p class="text-xs text-slate-500 mt-0.5">Humanized B2B emails drafted from voice pitches and reviewed for approval</p>
+          <p class="text-xs text-slate-500 mt-0.5">Humanized B2B emails drafted from voice pitches, reviewed, and dispatched via Hostinger</p>
         </div>
-        <button onclick="fetchData()" class="bg-white border border-slate-200 px-4 py-2 rounded-full text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-rotate text-[#16a34a]"></i> Refresh Emails
-        </button>
+        <div class="flex items-center gap-2">
+          <button onclick="openSettingsModal()" class="bg-white border border-slate-200 px-4 py-2 rounded-full text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-gear text-slate-400"></i> SMTP Settings
+          </button>
+          <button onclick="fetchData()" class="bg-white border border-slate-200 px-4 py-2 rounded-full text-xs font-semibold text-slate-700 shadow-xs hover:bg-slate-50 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-rotate text-[#16a34a]"></i> Refresh Emails
+          </button>
+        </div>
       </div>
 
       <div class="bg-white rounded-[32px] p-5 border border-slate-200/80 shadow-[0_4px_25px_-5px_rgba(0,0,0,0.04)] overflow-hidden">
-        <div id="emails-container" class="space-y-3">
+        <div id="emails-container" class="space-y-3.5">
           <div class="text-slate-400 text-center py-16">
             <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-2 text-lg">
               <i class="fa-regular fa-envelope"></i>
@@ -298,7 +304,7 @@
         <div class="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs space-y-2">
           <div class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Emails Sent / Approved</div>
           <div id="overview-emails" class="text-4xl font-extrabold text-blue-600">0</div>
-          <p class="text-xs text-slate-500 font-medium">Human-in-the-Loop Approved</p>
+          <p class="text-xs text-slate-500 font-medium">Hostinger: vishal@vrcindustry.com</p>
         </div>
       </div>
     </div>
@@ -343,8 +349,12 @@
         </button>
       </div>
 
-      <!-- Recipient Summary -->
-      <div class="p-3.5 rounded-2xl bg-[#fbfbfa] border border-slate-200/80 text-xs space-y-1">
+      <!-- Sender & Recipient Summary -->
+      <div class="p-3.5 rounded-2xl bg-[#fbfbfa] border border-slate-200/80 text-xs space-y-1.5">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-400 font-semibold">From (Hostinger):</span>
+          <span class="font-mono font-bold text-slate-800">vishal@vrcindustry.com</span>
+        </div>
         <div class="flex items-center justify-between">
           <span class="text-slate-400 font-semibold">Recipient:</span>
           <span id="modal-lead-name" class="font-bold text-slate-900">Name</span>
@@ -354,7 +364,7 @@
           <span id="modal-lead-role" class="text-slate-700">Role @ Company</span>
         </div>
         <div class="flex items-center justify-between">
-          <span class="text-slate-400 font-semibold">Direct Email:</span>
+          <span class="text-slate-400 font-semibold">Direct Verified Email:</span>
           <span id="modal-lead-email" class="font-mono font-bold text-[#16a34a]">email@company.com</span>
         </div>
       </div>
@@ -397,7 +407,7 @@
           ></textarea>
         </div>
 
-        <div id="modal-send-status" class="hidden text-xs p-3 rounded-2xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#16a34a] font-semibold"></div>
+        <div id="modal-send-status" class="hidden text-xs p-3.5 rounded-2xl"></div>
 
         <div class="flex justify-between items-center pt-2">
           <span class="text-[11px] text-slate-400">Strictly human-in-the-loop: review before sending.</span>
@@ -406,10 +416,80 @@
               Cancel
             </button>
             <button id="approve-send-btn" onclick="sendDraftedEmail()" class="px-6 py-2 rounded-full bg-[#16a34a] hover:bg-green-700 text-white text-xs font-extrabold transition flex items-center gap-2 shadow-xs">
-              <i class="fa-solid fa-check"></i>
-              <span>Approve & Send</span>
+              <i class="fa-solid fa-paper-plane"></i>
+              <span>Approve & Send (Hostinger)</span>
             </button>
           </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==================== SETTINGS MODAL ==================== -->
+  <div id="settings-modal" class="fixed inset-0 bg-slate-950/40 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-[36px] max-w-lg w-full p-7 shadow-2xl space-y-5 animate-in fade-in zoom-in-95 duration-150">
+      
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2.5">
+          <div class="w-9 h-9 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-sm font-bold">
+            <i class="fa-solid fa-envelope-open-text"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Hostinger Email Settings</h3>
+            <p class="text-xs text-slate-400">Outreach dispatch credentials & connection health</p>
+          </div>
+        </div>
+        <button onclick="closeSettingsModal()" class="w-8 h-8 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div class="p-3 rounded-2xl bg-[#fbfbfa] border border-slate-200 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 font-semibold">Sender Email:</span>
+            <span class="font-mono font-bold text-slate-900">vishal@vrcindustry.com</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 font-semibold">SMTP Host & Port:</span>
+            <span class="font-mono text-slate-700">smtp.hostinger.com : 465 (SSL)</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-slate-500 font-semibold">Password Status:</span>
+            <span id="settings-pwd-status" class="px-2 py-0.5 rounded-md font-bold bg-amber-50 text-amber-700 border border-amber-200">
+              Checking...
+            </span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Hostinger Email Password:
+          </label>
+          <input 
+            type="password" 
+            id="settings-smtp-pass" 
+            placeholder="Enter password for vishal@vrcindustry.com"
+            class="w-full bg-[#fbfbfa] border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-900 focus:outline-none focus:border-[#16a34a] font-mono"
+          >
+          <p class="text-[11px] text-slate-400 mt-1">This connects Nodemailer to your Hostinger mailbox to send live emails.</p>
+        </div>
+
+        <div id="settings-feedback" class="hidden text-xs p-3 rounded-2xl"></div>
+      </div>
+
+      <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+        <button id="test-smtp-btn" onclick="testSmtpConnection()" class="px-4 py-2 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5">
+          <i class="fa-solid fa-plug"></i> Test Connection
+        </button>
+        <div class="flex gap-2">
+          <button onclick="closeSettingsModal()" class="px-4 py-2 rounded-full bg-slate-100 text-xs font-bold text-slate-600 hover:bg-slate-200 transition">
+            Close
+          </button>
+          <button id="save-settings-btn" onclick="saveSmtpSettings()" class="px-5 py-2 rounded-full bg-[#18181b] hover:bg-black text-white text-xs font-bold transition shadow-xs">
+            Save Password
+          </button>
         </div>
       </div>
 
@@ -622,12 +702,17 @@
               </span>
             </td>
 
-            <!-- Actions: Draft Email -->
+            <!-- Actions: Draft Email & Delete -->
             <td class="py-3.5 px-4 text-right">
-              <button onclick="openDraftModalForLead('${l.id}'); event.stopPropagation();" class="px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-black text-white text-[11px] font-bold inline-flex items-center gap-1.5 transition shadow-2xs">
-                <i class="fa-regular fa-paper-plane text-[10px] text-[#22c55e]"></i>
-                <span>Draft Email</span>
-              </button>
+              <div class="inline-flex items-center gap-1.5">
+                <button onclick="openDraftModalForLead('${l.id}'); event.stopPropagation();" class="px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-black text-white text-[11px] font-bold inline-flex items-center gap-1.5 transition shadow-2xs">
+                  <i class="fa-regular fa-paper-plane text-[10px] text-[#22c55e]"></i>
+                  <span>Draft Email</span>
+                </button>
+                <button onclick="deleteLead('${l.id}'); event.stopPropagation();" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-400 flex items-center justify-center transition" title="Delete prospect">
+                  <i class="fa-regular fa-trash-can text-xs"></i>
+                </button>
+              </div>
             </td>
           </tr>
         `;
@@ -675,31 +760,114 @@
       container.innerHTML = emails.map(email => {
         const isSent = email.status === 'sent' || email.status === 'approved';
         return `
-          <div class="p-4 rounded-2xl bg-[#fbfbfa] border border-slate-200/80 space-y-2.5">
-            <div class="flex items-center justify-between">
+          <div class="p-4 sm:p-5 rounded-2xl bg-[#fbfbfa] border border-slate-200/80 space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2">
               <div class="flex items-center gap-2">
                 <span class="font-bold text-slate-900 text-xs">${escapeHtml(email.leadName || 'Contact')}</span>
                 <span class="font-mono text-slate-500 text-[11px]">&lt;${escapeHtml(email.to)}&gt;</span>
-                <span class="text-[10px] bg-slate-100 text-slate-700 px-2 py-0.5 rounded-full font-semibold">${escapeHtml(email.brand || '')}</span>
+                <span class="text-[10px] bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full font-semibold">${escapeHtml(email.brand || '')}</span>
               </div>
               <div class="flex items-center gap-2">
                 <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
                   isSent ? 'bg-[#eaf8ee] text-[#16a34a]' : 'bg-amber-50 text-amber-700 border border-amber-200'
                 }">
-                  ${isSent ? '✓ ' + (email.status === 'sent' ? 'Sent' : 'Approved') : 'Draft'}
+                  ${isSent ? '✓ ' + (email.status === 'sent' ? 'Dispatched' : 'Approved') : 'Draft'}
                 </span>
                 <span class="text-[10px] text-slate-400">${new Date(email.timestamp).toLocaleString()}</span>
               </div>
             </div>
+
             <div class="text-xs font-bold text-slate-800">
               <span class="text-slate-400 font-normal">Subject:</span> ${escapeHtml(email.subject)}
             </div>
-            <div class="text-xs text-slate-600 bg-white p-3 rounded-xl border border-slate-100 leading-relaxed font-sans whitespace-pre-line">
+
+            <div class="text-xs text-slate-600 bg-white p-3.5 rounded-xl border border-slate-100 leading-relaxed font-sans whitespace-pre-line">
               ${escapeHtml(email.body || email.text || '')}
+            </div>
+
+            <!-- Footer: Delete and Send Buttons -->
+            <div class="flex items-center justify-between pt-1 border-t border-slate-100/80">
+              <span class="text-[10px] text-slate-400 font-mono">From: vishal@vrcindustry.com</span>
+              <div class="flex items-center gap-2">
+                ${!isSent ? `
+                  <button onclick="sendExistingDraft('${email.id}')" class="px-3.5 py-1.5 rounded-full bg-[#16a34a] hover:bg-green-700 text-white text-[11px] font-bold flex items-center gap-1.5 transition shadow-2xs">
+                    <i class="fa-solid fa-paper-plane text-[10px]"></i> Send Now
+                  </button>
+                ` : ''}
+                <button onclick="deleteEmailDraft('${email.id}')" class="px-3 py-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-600 text-[11px] font-bold flex items-center gap-1.5 transition border border-rose-200">
+                  <i class="fa-regular fa-trash-can text-[10px]"></i> Delete Draft
+                </button>
+              </div>
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    async function deleteEmailDraft(emailId) {
+      if (!confirm('Are you sure you want to delete this email draft from backend?')) return;
+
+      try {
+        const res = await fetch(`/api/emails/${emailId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          fetchData();
+        } else {
+          alert('Could not delete draft: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Error deleting draft: ' + err.message);
+      }
+    }
+
+    async function deleteLead(leadId) {
+      if (!confirm('Delete this prospect from the database?')) return;
+
+      try {
+        const res = await fetch(`/api/leads/${leadId}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+          fetchData();
+        } else {
+          alert('Could not delete prospect: ' + (data.error || 'Unknown error'));
+        }
+      } catch (err) {
+        alert('Error: ' + err.message);
+      }
+    }
+
+    async function sendExistingDraft(emailId) {
+      const email = allEmails.find(e => e.id === emailId);
+      if (!email) return;
+
+      if (!confirm(`Send email now to ${email.to} from vishal@vrcindustry.com?`)) return;
+
+      try {
+        const res = await fetch('/api/emails/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            draftId: email.id,
+            to: email.to,
+            subject: email.subject,
+            body: email.body || email.text
+          })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          if (data.result.sent) {
+            alert(`🚀 Email delivered successfully to ${email.to} via Hostinger!`);
+          } else {
+            alert(`✅ Email approved! (Note: Hostinger password is needed in Settings to send live).`);
+          }
+          fetchData();
+        } else {
+          alert('Error: ' + data.error);
+        }
+      } catch (err) {
+        alert('Failed to send email: ' + err.message);
+      }
     }
 
     function openDraftModalForLead(leadId) {
@@ -771,9 +939,10 @@
       const statusEl = document.getElementById('modal-send-status');
 
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Approving & Dispatching...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Dispatching via Hostinger...';
+      statusEl.className = 'text-xs p-3.5 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700';
       statusEl.classList.remove('hidden');
-      statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> Dispatching outreach...';
+      statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Connecting to smtp.hostinger.com...';
 
       try {
         const res = await fetch('/api/emails/send', {
@@ -789,22 +958,120 @@
 
         const data = await res.json();
         if (data.success) {
-          statusEl.innerHTML = `
-            <div class="flex items-center gap-1.5 font-bold">
-              <i class="fa-solid fa-circle-check"></i> 
-              ${data.result.sent ? 'Email successfully delivered via SMTP!' : 'Email approved & saved to campaign records!'}
-            </div>
-            ${data.result.simulated ? '<div class="text-[11px] text-slate-500 font-normal mt-0.5">Note: Set SMTP_USER & SMTP_PASS in Render to send live messages from your mailbox.</div>' : ''}
-          `;
+          if (data.result.sent) {
+            statusEl.className = 'text-xs p-3.5 rounded-2xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#16a34a] font-semibold';
+            statusEl.innerHTML = `
+              <div class="flex items-center gap-1.5 font-bold">
+                <i class="fa-solid fa-circle-check"></i> Email successfully dispatched via Hostinger!
+              </div>
+              <div class="text-[11px] font-normal text-slate-600 mt-1">Delivered from: vishal@vrcindustry.com to: ${currentDraftLead.email}</div>
+            `;
+          } else {
+            statusEl.className = 'text-xs p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-800';
+            statusEl.innerHTML = `
+              <div class="flex items-center gap-1.5 font-bold">
+                <i class="fa-solid fa-circle-check"></i> Email approved and saved to campaign!
+              </div>
+              <div class="text-[11px] font-normal mt-1">
+                To dispatch live emails automatically, enter your Hostinger password in 
+                <button onclick="closeDraftModal(); openSettingsModal();" class="underline font-bold text-blue-700">Settings</button>.
+              </div>
+            `;
+          }
           fetchData();
         } else {
-          statusEl.innerHTML = `<span class="text-rose-600">Error: ${data.error}</span>`;
+          statusEl.className = 'text-xs p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700';
+          statusEl.innerHTML = `<span class="font-bold">Error:</span> ${data.error}`;
         }
       } catch (err) {
-        statusEl.innerHTML = `<span class="text-rose-600">Error: ${err.message}</span>`;
+        statusEl.className = 'text-xs p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700';
+        statusEl.innerHTML = `<span class="font-bold">Error:</span> ${err.message}`;
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-check"></i> Approved & Logged';
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Approved & Sent';
+      }
+    }
+
+    // ==================== SETTINGS MODAL LOGIC ====================
+    async function openSettingsModal() {
+      document.getElementById('settings-modal').classList.remove('hidden');
+      document.getElementById('settings-feedback').classList.add('hidden');
+
+      try {
+        const res = await fetch('/api/settings');
+        const data = await res.json();
+        const badge = document.getElementById('settings-pwd-status');
+        if (data.hasPassword) {
+          badge.className = 'px-2 py-0.5 rounded-md font-bold bg-[#eaf8ee] text-[#16a34a] border border-[#bbf7d0]';
+          badge.textContent = '✓ Configured';
+        } else {
+          badge.className = 'px-2 py-0.5 rounded-md font-bold bg-amber-50 text-amber-700 border border-amber-200';
+          badge.textContent = 'Missing Password';
+        }
+      } catch (err) {
+        console.error('Error fetching settings:', err);
+      }
+    }
+
+    function closeSettingsModal() {
+      document.getElementById('settings-modal').classList.add('hidden');
+    }
+
+    async function saveSmtpSettings() {
+      const pass = document.getElementById('settings-smtp-pass').value.trim();
+      const feedback = document.getElementById('settings-feedback');
+      if (!pass) {
+        alert('Please enter your Hostinger email password.');
+        return;
+      }
+
+      feedback.className = 'text-xs p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700';
+      feedback.classList.remove('hidden');
+      feedback.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Saving password...';
+
+      try {
+        const res = await fetch('/api/settings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ smtpPass: pass })
+        });
+        const data = await res.json();
+        if (data.success) {
+          feedback.className = 'text-xs p-3 rounded-2xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#16a34a] font-semibold';
+          feedback.innerHTML = '✓ Hostinger password updated successfully! Click "Test Connection" to verify.';
+          document.getElementById('settings-pwd-status').className = 'px-2 py-0.5 rounded-md font-bold bg-[#eaf8ee] text-[#16a34a] border border-[#bbf7d0]';
+          document.getElementById('settings-pwd-status').textContent = '✓ Configured';
+        }
+      } catch (err) {
+        feedback.className = 'text-xs p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700';
+        feedback.innerHTML = 'Error: ' + err.message;
+      }
+    }
+
+    async function testSmtpConnection() {
+      const feedback = document.getElementById('settings-feedback');
+      const btn = document.getElementById('test-smtp-btn');
+
+      btn.disabled = true;
+      feedback.className = 'text-xs p-3 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700';
+      feedback.classList.remove('hidden');
+      feedback.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Connecting to smtp.hostinger.com on port 465...';
+
+      try {
+        const res = await fetch('/api/test-smtp', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          feedback.className = 'text-xs p-3 rounded-2xl bg-[#f0fdf4] border border-[#bbf7d0] text-[#16a34a] font-semibold';
+          feedback.innerHTML = `✓ ${data.message}`;
+        } else {
+          feedback.className = 'text-xs p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700';
+          feedback.innerHTML = `✗ ${data.message}`;
+        }
+      } catch (err) {
+        feedback.className = 'text-xs p-3 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700';
+        feedback.innerHTML = `✗ Connection error: ${err.message}`;
+      } finally {
+        btn.disabled = false;
       }
     }
 
