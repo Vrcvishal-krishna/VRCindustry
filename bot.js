@@ -111,8 +111,11 @@ User's incoming message:
 "${text}"
 
 Determine if this message is:
-1. "PITCH_FOR_CURRENT_LEAD": User is giving ideas, pitch points, or instructions to draft/send an email to the CURRENT contact (e.g. "I want to email him about...", "Tell them we want to install EV chargers...", "Pitch 50% revenue share", "Here is what to say...").
-2. "NEW_SEARCH": User is asking to look up or find another company, founder, or brand (e.g. "Find me founder of Swiggy", "Look up Zomato", "What's the email of ...").
+1. "PITCH_FOR_CURRENT_LEAD": User is giving ideas or pitch instructions specifically for ${activeLead.name} at ${activeLead.brand}.
+2. "NEW_SEARCH": User is mentioning another company/brand (e.g. 91 Springboard, Bold Earth, Zepoint, etc.), asking to find contacts, or giving a new company pitch.
+
+CRITICAL RULE:
+If the user mentions ANY brand or company name that is DIFFERENT from "${activeLead.brand}", the intent is ALWAYS "NEW_SEARCH".
 
 Output strictly JSON:
 {
@@ -128,7 +131,7 @@ Output strictly JSON:
       body: JSON.stringify({
         model: 'openai/gpt-oss-120b',
         messages: [{ role: 'user', content: prompt }],
-        temperature: 0.1,
+        temperature: 0.0,
         response_format: { type: 'json_object' }
       })
     });
@@ -142,11 +145,8 @@ Output strictly JSON:
     console.warn('[Intent] Classification fallback check:', err.message);
   }
 
-  // Heuristic fallback if LLM call fails
-  const lower = text.toLowerCase();
-  const searchKeywords = ['find', 'search', 'founder of', 'who is', 'give me', 'look up'];
-  const isExplicitSearch = searchKeywords.some(k => lower.includes(k));
-  return { isPitchForCurrentLead: !isExplicitSearch };
+  // Safe fallback: default to FALSE (treat as new search)
+  return { isPitchForCurrentLead: false };
 }
 
 async function handleMessage(msg) {
@@ -182,6 +182,11 @@ async function handleMessage(msg) {
         `2. <b>Voice-to-Email:</b> Speak your idea ➔ AI crafts a humanized B2B email and saves it to your Web Dashboard ready to 1-click copy & send!`,
         'HTML'
       );
+      return;
+    }
+    if (msg.text.startsWith('/reset') || msg.text.startsWith('/clear') || msg.text.startsWith('/cancel')) {
+      chatSessions.delete(chatId);
+      await sendMessage(chatId, '🔄 <b>Session reset!</b> Ready for your next brand or search inquiry.', 'HTML');
       return;
     }
     rawText = msg.text;
@@ -222,6 +227,9 @@ async function handleMessage(msg) {
           status: 'draft'
         });
 
+        // IMMEDIATELY reset pitch mode so subsequent messages are treated as new brand inquiries!
+        session.awaitingPitch = false;
+        session.lastLead = null;
         session.pendingDraft = savedDraft;
         chatSessions.set(chatId, session);
 
@@ -314,10 +322,10 @@ async function handleMessage(msg) {
         source: stage
       });
 
-      // Save lead context for subsequent voice pitch email drafting
+      // Save lead context for subsequent voice pitch email drafting, defaulting awaitingPitch to false
       chatSessions.set(chatId, {
         lastLead: savedLead,
-        awaitingPitch: true,
+        awaitingPitch: false,
         pendingDraft: null
       });
 
@@ -364,9 +372,16 @@ async function handleCallbackQuery(cq) {
 
   if (data.startsWith('prompt_pitch_')) {
     await answerCallbackQuery(cq.id, 'Ready for your pitch!');
-    const session = chatSessions.get(chatId);
-    const leadName = (session && session.lastLead) ? session.lastLead.name : 'this contact';
-    await sendMessage(chatId, `🎙️ <b>Go ahead!</b> Send a voice note or type what you want to propose to ${escapeHtml(leadName)}.`, 'HTML');
+    const leadId = data.replace('prompt_pitch_', '');
+    const leads = getLeads();
+    const lead = leads.find(l => l.id === leadId) || (chatSessions.get(chatId) || {}).lastLead;
+    chatSessions.set(chatId, {
+      lastLead: lead,
+      awaitingPitch: true,
+      pendingDraft: null
+    });
+    const leadName = (lead && lead.name) ? lead.name : 'this contact';
+    await sendMessage(chatId, `🎙️ <b>Ready for your pitch!</b> Send a voice note or type what you want to propose to ${escapeHtml(leadName)}.\nAI will craft an email draft tailored for them.`, 'HTML');
     return;
   }
 
