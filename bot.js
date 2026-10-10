@@ -3,7 +3,6 @@ const { transcribeAudio } = require('./services/speech');
 const { analyzePitch } = require('./services/intelligence');
 const { executeWaterfall } = require('./services/waterfall');
 const { writeHumanizedEmail } = require('./services/emailWriter');
-const { sendApprovedEmail } = require('./services/emailSender');
 const { saveLead, addLog, getEmails, saveEmail, updateEmailStatus, deleteEmail } = require('./db');
 
 let isPolling = false;
@@ -174,14 +173,13 @@ async function handleMessage(msg) {
     }
   } else if (msg.text) {
     if (msg.text.startsWith('/start')) {
-      const sender = config.SMTP_USER || 'vishal@vrcindustry.com';
       await sendMessage(chatId, 
         `👋 <b>Welcome to Time Charge Autonomous Prospecting & Email Outreach!</b>\n\n` +
         `Send me a <b>voice note</b> anytime you spot a brand:\n` +
         `<i>"I saw Brand X and have an idea to collaborate on EV charging..."</i>\n\n` +
         `🚀 <b>Autonomous Two-Step Flow:</b>\n` +
         `1. <b>Discover Contact:</b> AI verifies direct email (100% verified, 0% catch-all).\n` +
-        `2. <b>Voice-to-Email:</b> Speak what to say ➔ AI writes humanized email ➔ Review & Send from <code>${escapeHtml(sender)}</code>!`,
+        `2. <b>Voice-to-Email:</b> Speak your idea ➔ AI crafts a humanized B2B email and saves it to your Web Dashboard ready to 1-click copy & send!`,
         'HTML'
       );
       return;
@@ -232,26 +230,17 @@ async function handleMessage(msg) {
           subject: draftContent.subject
         });
 
-        const senderEmail = config.SMTP_USER || 'vishal@vrcindustry.com';
         const previewMsg = 
           `✉️ <b>AI Humanized Email Draft:</b>\n\n` +
-          `<b>From:</b> <code>${escapeHtml(senderEmail)}</code> (Hostinger)\n` +
           `<b>To:</b> <code>${escapeHtml(session.lastLead.email)}</code>\n` +
           `<b>Subject:</b> ${escapeHtml(draftContent.subject)}\n\n` +
-          `${escapeHtml(draftContent.body)}\n\n` +
           `─────────────────────────\n` +
-          `<b>Shall I send this email to ${escapeHtml(session.lastLead.name)}?</b>`;
+          `${escapeHtml(draftContent.body)}\n` +
+          `─────────────────────────\n\n` +
+          `📋 <b>Draft saved to your Web Dashboard!</b>\n` +
+          `You can copy the text directly from here or open your Web Dashboard to 1-click copy & launch in your mail client.`;
 
-        const keyboard = {
-          inline_keyboard: [
-            [
-              { text: '✅ Approve & Send', callback_data: `approve_draft_${savedDraft.id}` },
-              { text: '❌ Discard', callback_data: `discard_draft_${savedDraft.id}` }
-            ]
-          ]
-        };
-
-        await sendMessage(chatId, previewMsg, 'HTML', keyboard);
+        await sendMessage(chatId, previewMsg, 'HTML');
         return;
       } catch (err) {
         console.error('[EmailWriter] Error drafting email:', err);
@@ -348,7 +337,7 @@ async function handleMessage(msg) {
       const pitchPrompt = 
         `🎙️ <b>Want to reach out to ${escapeHtml(lead.name)}?</b>\n` +
         `Reply with a <b>voice note</b> (or text) explaining your pitch or collaboration idea!\n` +
-        `AI will craft a humanized, zero-cliché B2B email and get your approval before sending from <code>${escapeHtml(config.SMTP_USER || 'vishal@vrcindustry.com')}</code>.`;
+        `AI will craft a humanized, zero-cliché B2B email draft saved directly to your Web Dashboard.`;
 
       const keyboard = {
         inline_keyboard: [
@@ -381,63 +370,11 @@ async function handleCallbackQuery(cq) {
     return;
   }
 
-  if (data.startsWith('approve_draft_')) {
-    const draftId = data.replace('approve_draft_', '');
-    const emails = getEmails();
-    let draft = emails.find(e => e.id === draftId);
-
-    // Fallback to in-memory session if file was re-read
-    const session = chatSessions.get(chatId);
-    if (!draft && session && session.pendingDraft && session.pendingDraft.id === draftId) {
-      draft = session.pendingDraft;
-    }
-
-    if (!draft) {
-      await answerCallbackQuery(cq.id, 'Draft not found or expired.');
-      await editMessageText(chatId, messageId, '⚠️ <b>Draft not found or expired.</b> Please send your pitch again to generate a fresh draft.', 'HTML');
-      return;
-    }
-
-    await answerCallbackQuery(cq.id, 'Sending email via Hostinger...');
-
-    try {
-      const result = await sendApprovedEmail({
-        to: draft.to,
-        subject: draft.subject,
-        text: draft.body
-      });
-
-      const newStatus = result.sent ? 'sent' : 'approved';
-      updateEmailStatus(draftId, newStatus, {
-        sentAt: new Date().toISOString(),
-        simulated: result.simulated,
-        messageId: result.messageId || null
-      });
-
-      addLog('email_sent', `Email to ${draft.to} approved (${result.sent ? 'Dispatched' : 'Logged'})`, {
-        draftId,
-        simulated: result.simulated
-      });
-
-      const senderEmail = config.SMTP_USER || 'vishal@vrcindustry.com';
-      const confirmText = result.sent
-        ? `🚀 <b>Email Sent Successfully!</b>\n\n<b>From:</b> <code>${escapeHtml(senderEmail)}</code> (Hostinger)\n<b>To:</b> <code>${escapeHtml(draft.to)}</code>\n\n<b>Subject:</b> ${escapeHtml(draft.subject)}`
-        : `✅ <b>Email Approved & Saved!</b>\n\n<b>Linked Sender:</b> <code>${escapeHtml(senderEmail)}</code> (Hostinger)\n<b>Recipient:</b> <code>${escapeHtml(draft.to)}</code>\n<b>Subject:</b> ${escapeHtml(draft.subject)}\n\n⚠️ <i>Note: To dispatch live emails automatically, please configure your Hostinger email password (<code>SMTP_PASS</code>) in Render Environment Variables or in Dashboard Settings.</i>`;
-
-      await editMessageText(chatId, messageId, confirmText, 'HTML');
-    } catch (err) {
-      console.error('[Bot] Error dispatching email:', err);
-      updateEmailStatus(draftId, 'failed', { error: err.message });
-      await editMessageText(chatId, messageId, `⚠️ <b>Could not send email:</b>\n${escapeHtml(err.message)}`, 'HTML');
-    }
-    return;
-  }
-
   if (data.startsWith('discard_draft_')) {
     const draftId = data.replace('discard_draft_', '');
     deleteEmail(draftId);
-    await answerCallbackQuery(cq.id, 'Draft discarded and removed.');
-    await editMessageText(chatId, messageId, '❌ <b>Email draft discarded and deleted.</b>', 'HTML');
+    await answerCallbackQuery(cq.id, 'Draft deleted.');
+    await editMessageText(chatId, messageId, '❌ <b>Email draft deleted.</b>', 'HTML');
     return;
   }
 }

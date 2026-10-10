@@ -17,7 +17,6 @@ const {
 const { analyzePitch } = require('./services/intelligence');
 const { executeWaterfall } = require('./services/waterfall');
 const { writeHumanizedEmail } = require('./services/emailWriter');
-const { sendApprovedEmail, verifySmtpConnection } = require('./services/emailSender');
 
 const app = express();
 app.use(cors());
@@ -108,79 +107,7 @@ app.post('/api/emails/draft', async (req, res) => {
   }
 });
 
-// API: Approve & Send an email
-app.post('/api/emails/send', async (req, res) => {
-  const { draftId, to, subject, body } = req.body;
-  if (!to || !subject || !body) {
-    return res.status(400).json({ error: 'to, subject, and body are required' });
-  }
 
-  try {
-    const result = await sendApprovedEmail({ to, subject, text: body });
-    const newStatus = result.sent ? 'sent' : 'approved';
-
-    if (draftId) {
-      updateEmailStatus(draftId, newStatus, {
-        subject,
-        body,
-        sentAt: new Date().toISOString(),
-        simulated: result.simulated,
-        messageId: result.messageId || null
-      });
-    } else {
-      saveEmail({
-        to,
-        subject,
-        body,
-        status: newStatus,
-        sentAt: new Date().toISOString(),
-        simulated: result.simulated
-      });
-    }
-
-    addLog('email_sent', `Outreach email to ${to} (${result.sent ? 'Dispatched via Hostinger' : 'Saved/Pending Hostinger Password'})`, {
-      simulated: result.simulated,
-      from: config.SMTP_USER || 'vishal@vrcindustry.com'
-    });
-
-    res.json({ success: true, result });
-  } catch (err) {
-    console.error('Error sending email:', err);
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// API: Get SMTP Settings (safe, without leaking full password)
-app.get('/api/settings', (req, res) => {
-  res.json({
-    smtpHost: config.SMTP_HOST || 'smtp.hostinger.com',
-    smtpPort: config.SMTP_PORT || '465',
-    smtpUser: config.SMTP_USER || 'vishal@vrcindustry.com',
-    emailFrom: config.EMAIL_FROM || '"Vishal | Time Charge" <vishal@vrcindustry.com>',
-    hasPassword: Boolean(config.SMTP_PASS)
-  });
-});
-
-// API: Save SMTP Settings (allows setting password directly from Web UI)
-app.post('/api/settings', (req, res) => {
-  const { smtpPass } = req.body;
-  if (typeof smtpPass === 'string' && smtpPass.trim()) {
-    config.SMTP_PASS = smtpPass.trim();
-    process.env.SMTP_PASS = smtpPass.trim();
-    addLog('settings_updated', 'Hostinger SMTP password updated');
-  }
-  res.json({ success: true, hasPassword: Boolean(config.SMTP_PASS) });
-});
-
-// API: Test Hostinger SMTP Connection
-app.post('/api/test-smtp', async (req, res) => {
-  try {
-    const result = await verifySmtpConnection();
-    res.json(result);
-  } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
-  }
-});
 
 // API: Export to CSV
 app.get('/api/export', (req, res) => {
