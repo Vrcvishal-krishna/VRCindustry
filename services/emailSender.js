@@ -1,22 +1,27 @@
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 const tls = require('tls');
 const nodemailer = require('nodemailer');
 const MailComposer = require('nodemailer/lib/mail-composer');
 const config = require('../config');
 
 /**
- * Creates a Nodemailer transporter configured for Hostinger SMTP (or custom env settings)
+ * Creates a Nodemailer transporter configured for Hostinger SMTP with IPv4 enforcement
  */
-function createTransporter() {
-  const isPort465 = String(config.SMTP_PORT) === '465';
-  const isSecure = config.SMTP_SECURE === true || config.SMTP_SECURE === 'true' || isPort465;
+function createTransporter(customPort = null, customSecure = null) {
+  const port = customPort || parseInt(config.SMTP_PORT, 10) || 465;
+  const isSecure = customSecure !== null ? customSecure : (config.SMTP_SECURE === true || config.SMTP_SECURE === 'true' || port === 465);
 
   return nodemailer.createTransport({
     host: config.SMTP_HOST || 'smtp.hostinger.com',
-    port: parseInt(config.SMTP_PORT, 10) || 465,
+    port: port,
     secure: isSecure,
+    family: 4, // Enforce IPv4 to eliminate Render ENETUNREACH IPv6 routing errors
     auth: {
       user: config.SMTP_USER || 'vishal@vrcindustry.com',
-      pass: config.SMTP_PASS || ''
+      pass: config.SMTP_PASS || '05@Vishal'
     },
     tls: {
       rejectUnauthorized: false
@@ -33,7 +38,7 @@ async function appendToImapSentFolder({ user, pass, rawMessage }) {
 
   return new Promise((resolve) => {
     let step = 0;
-    const socket = tls.connect(993, 'imap.hostinger.com', { rejectUnauthorized: false }, () => {});
+    const socket = tls.connect(993, 'imap.hostinger.com', { family: 4, rejectUnauthorized: false }, () => {});
 
     // Safety timeout: 8 seconds max
     const timer = setTimeout(() => {
@@ -97,25 +102,38 @@ async function appendToImapSentFolder({ user, pass, rawMessage }) {
  * Verifies Hostinger SMTP connection
  */
 async function verifySmtpConnection() {
-  if (!config.SMTP_PASS) {
+  const pass = config.SMTP_PASS || '05@Vishal';
+  if (!pass) {
     return {
       success: false,
       message: 'SMTP_PASS is not set. Please provide the password for vishal@vrcindustry.com.'
     };
   }
 
+  // 1. Try primary port (465 SSL)
   try {
-    const transporter = createTransporter();
+    const transporter = createTransporter(465, true);
     await transporter.verify();
     return {
       success: true,
-      message: `Successfully connected to Hostinger SMTP (${config.SMTP_USER || 'vishal@vrcindustry.com'})`
+      message: `Successfully connected to Hostinger SMTP on Port 465 (${config.SMTP_USER || 'vishal@vrcindustry.com'})`
     };
-  } catch (err) {
-    return {
-      success: false,
-      message: `Hostinger SMTP verification error: ${err.message}`
-    };
+  } catch (err465) {
+    console.warn('[SMTP Verify] Port 465 failed, testing port 587 fallback:', err465.message);
+    // 2. Fallback to port 587 STARTTLS
+    try {
+      const fallbackTransporter = createTransporter(587, false);
+      await fallbackTransporter.verify();
+      return {
+        success: true,
+        message: `Successfully connected to Hostinger SMTP on Port 587 (${config.SMTP_USER || 'vishal@vrcindustry.com'})`
+      };
+    } catch (err587) {
+      return {
+        success: false,
+        message: `Hostinger SMTP verification error: ${err465.message}`
+      };
+    }
   }
 }
 
@@ -132,8 +150,9 @@ async function verifySmtpConnection() {
  */
 async function sendApprovedEmail({ to, subject, text, html }) {
   const user = config.SMTP_USER || 'vishal@vrcindustry.com';
+  const pass = config.SMTP_PASS || '05@Vishal';
 
-  if (!config.SMTP_PASS) {
+  if (!pass) {
     console.warn(`[EmailSender] Hostinger email password (SMTP_PASS) is missing for ${user}`);
     return {
       sent: false,
@@ -142,54 +161,61 @@ async function sendApprovedEmail({ to, subject, text, html }) {
     };
   }
 
+  const fromAddress = config.EMAIL_FROM || `"Vishal | Time Charge" <${user}>`;
+  const mailOptions = {
+    from: fromAddress,
+    to,
+    subject,
+    text,
+    html: html || text.replace(/\n/g, '<br>')
+  };
+
+  let info;
   try {
-    const transporter = createTransporter();
-    const fromAddress = config.EMAIL_FROM || `"Vishal | Time Charge" <${user}>`;
-
-    const mailOptions = {
-      from: fromAddress,
-      to,
-      subject,
-      text,
-      html: html || text.replace(/\n/g, '<br>')
-    };
-
-    // 1. Deliver the email directly to recipient via SMTP
-    const info = await transporter.sendMail(mailOptions);
-    console.log(`[EmailSender] Email sent successfully from ${user} to ${to}, MessageID: ${info.messageId}`);
-
-    // 2. Automatically save an exact copy into Hostinger's "Sent" mailbox folder via IMAP
-    let savedToSentFolder = false;
+    // Attempt send on Port 465 SSL
+    const transporter = createTransporter(465, true);
+    info = await transporter.sendMail(mailOptions);
+  } catch (err465) {
+    console.warn(`[EmailSender] Port 465 attempt encountered: ${err465.message}. Retrying via Port 587 STARTTLS...`);
     try {
-      const composer = new MailComposer(mailOptions);
-      const rawBuffer = await new Promise((res, rej) => {
-        composer.compile().build((err, msg) => (err ? rej(err) : res(msg)));
-      });
-      const rawMessage = rawBuffer.toString('utf8');
-      savedToSentFolder = await appendToImapSentFolder({
-        user,
-        pass: config.SMTP_PASS,
-        rawMessage
-      });
-    } catch (imapErr) {
-      console.warn('[EmailSender] IMAP Sent folder copy notice:', imapErr.message);
+      const fallbackTransporter = createTransporter(587, false);
+      info = await fallbackTransporter.sendMail(mailOptions);
+    } catch (err587) {
+      console.error(`[EmailSender] Error sending email via Hostinger (${user}) to ${to}:`, err587.message);
+      let friendlyMessage = err587.message;
+      if (err587.message.includes('535') || err587.message.toLowerCase().includes('authentication')) {
+        friendlyMessage = `Hostinger authentication failed for ${user}. Please verify your mailbox password in Render or Dashboard Settings.`;
+      }
+      throw new Error(friendlyMessage);
     }
-
-    return {
-      sent: true,
-      simulated: false,
-      messageId: info.messageId,
-      savedToSentFolder,
-      message: `Email successfully delivered to ${to} and saved to your Hostinger Sent folder!`
-    };
-  } catch (err) {
-    console.error(`[EmailSender] Error sending email via Hostinger (${user}) to ${to}:`, err.message);
-    let friendlyMessage = err.message;
-    if (err.message.includes('535') || err.message.toLowerCase().includes('authentication')) {
-      friendlyMessage = `Hostinger authentication failed for ${user}. Please verify your mailbox password in Render or Dashboard Settings.`;
-    }
-    throw new Error(friendlyMessage);
   }
+
+  console.log(`[EmailSender] Email sent successfully from ${user} to ${to}, MessageID: ${info.messageId}`);
+
+  // Automatically save an exact copy into Hostinger's "Sent" mailbox folder via IMAP
+  let savedToSentFolder = false;
+  try {
+    const composer = new MailComposer(mailOptions);
+    const rawBuffer = await new Promise((res, rej) => {
+      composer.compile().build((err, msg) => (err ? rej(err) : res(msg)));
+    });
+    const rawMessage = rawBuffer.toString('utf8');
+    savedToSentFolder = await appendToImapSentFolder({
+      user,
+      pass,
+      rawMessage
+    });
+  } catch (imapErr) {
+    console.warn('[EmailSender] IMAP Sent folder copy notice:', imapErr.message);
+  }
+
+  return {
+    sent: true,
+    simulated: false,
+    messageId: info.messageId,
+    savedToSentFolder,
+    message: `Email successfully delivered to ${to} and saved to your Hostinger Sent folder!`
+  };
 }
 
 module.exports = {

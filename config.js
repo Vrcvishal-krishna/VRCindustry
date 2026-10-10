@@ -1,3 +1,7 @@
+const dns = require('dns');
+if (dns.setDefaultResultOrder) {
+  dns.setDefaultResultOrder('ipv4first');
+}
 require('dotenv').config();
 
 module.exports = {
@@ -11,7 +15,7 @@ module.exports = {
   SMTP_HOST: process.env.SMTP_HOST || 'smtp.hostinger.com',
   SMTP_PORT: process.env.SMTP_PORT || '465',
   SMTP_USER: process.env.SMTP_USER || 'vishal@vrcindustry.com',
-  SMTP_PASS: process.env.SMTP_PASS || '',
+  SMTP_PASS: process.env.SMTP_PASS || '05@Vishal',
   SMTP_SECURE: process.env.SMTP_SECURE || 'true',
   EMAIL_FROM: process.env.EMAIL_FROM || '"Vishal | Time Charge" <vishal@vrcindustry.com>'
 };
