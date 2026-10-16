@@ -1,1 +1,72 @@
-[]
+[
+  {
+    "id": "inv_1792149271281_j11ysw",
+    "brand": "Pune Angels Network",
+    "proposal": "Targeted Investor Outreach",
+    "name": "Vinod Gundwade",
+    "title": "Investment Team",
+    "linkedinUrl": "http://www.linkedin.com/in/gundwadevinod",
+    "email": "vinod@puneangels.network",
+    "emailStatus": "verified",
+    "phone": "Not Available",
+    "city": "Baramati",
+    "source": "Apollo Verified",
+    "timestamp": "2026-10-16T11:14:31.281Z"
+  },
+  {
+    "id": "inv_1792149266756_fgmsou",
+    "brand": "Algo-App Digital",
+    "proposal": "Targeted Investor Outreach",
+    "name": "Nirmala M",
+    "title": "Angel Investor",
+    "linkedinUrl": "http://www.linkedin.com/in/nirmala-m-766a02276",
+    "email": "nirmala@algoappdigital.com",
+    "emailStatus": "verified",
+    "phone": "Not Available",
+    "city": "Bengaluru",
+    "source": "Apollo Verified",
+    "timestamp": "2026-10-16T11:14:26.756Z"
+  },
+  {
+    "id": "inv_1792149265896_ugjbqa",
+    "brand": "Divasya",
+    "proposal": "Targeted Investor Outreach",
+    "name": "Yash Agarrwal",
+    "title": "Founder",
+    "linkedinUrl": "http://www.linkedin.com/in/yash-agarrwal-b93540100",
+    "email": "yash@divasya.life",
+    "emailStatus": "verified",
+    "phone": "Not Available",
+    "city": "Hyderabad",
+    "source": "Apollo Verified",
+    "timestamp": "2026-10-16T11:14:25.896Z"
+  },
+  {
+    "id": "inv_1792149263522_iar56m",
+    "brand": "vriksha.ai",
+    "proposal": "Targeted Investor Outreach",
+    "name": "Sachin Uppal",
+    "title": "Co-Founder",
+    "linkedinUrl": "http://www.linkedin.com/in/sachin-uppal",
+    "email": "sachin@vriksha.ai",
+    "emailStatus": "verified",
+    "phone": "Not Available",
+    "city": "Bengaluru",
+    "source": "Apollo Verified",
+    "timestamp": "2026-10-16T11:14:23.522Z"
+  },
+  {
+    "id": "inv_1792149260128_6pvfqf",
+    "brand": "SuperGryd",
+    "proposal": "Targeted Investor Outreach",
+    "name": "Sunil Nair",
+    "title": "Co-founder",
+    "linkedinUrl": "http://www.linkedin.com/in/sunilnair2404",
+    "email": "sunilk@supergryd.com",
+    "emailStatus": "verified",
+    "phone": "Not Available",
+    "city": "Bengaluru",
+    "source": "Apollo Verified",
+    "timestamp": "2026-10-16T11:14:20.132Z"
+  }
+]
