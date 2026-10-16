@@ -1,5 +1,467 @@
 [
   {
+    "id": "log_1791634474366",
+    "timestamp": "2026-10-10T12:14:34.366Z",
+    "type": "corporate_pattern_found",
+    "message": "Resolved verified corporate email: pari.singhania@olaelectric.com",
+    "details": {}
+  },
+  {
+    "id": "log_1791634468649",
+    "timestamp": "2026-10-10T12:14:28.649Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/pari-singhania",
+    "details": {}
+  },
+  {
+    "id": "log_1791634468570",
+    "timestamp": "2026-10-10T12:14:28.570Z",
+    "type": "apify_search_completed",
+    "message": "Found 10 candidate(s) on Apify for OLA ELECTRIC",
+    "details": {
+      "candidates": [
+        {
+          "name": "Pari Singhania",
+          "firstName": "Pari",
+          "lastName": "Singhania",
+          "title": "Brand Manager @ Ola Electric - Haleon",
+          "linkedinUrl": "https://in.linkedin.com/in/pari-singhania",
+          "snippet": "I am a Brand Manager at Ola Electric, building high-impact campaigns at the intersection of brand, data, and execution. Experienced in product launches, ...Read more"
+        },
+        {
+          "name": "Saurabh Sharda",
+          "firstName": "Saurabh",
+          "lastName": "Sharda",
+          "title": "From Blueprint to Reality - Brownfield ...",
+          "linkedinUrl": "https://in.linkedin.com/in/saurabhsharda",
+          "snippet": "Head Of Growth Partnerships & Corporate Affairs. Ola Electric Mobility Pvt. Ltd. Apr 2019 - Present 7 years 7 months. - Founding team member of OLA Electric - ...Read more"
+        },
+        {
+          "name": "Sanchit Sehgal",
+          "firstName": "Sanchit",
+          "lastName": "Sehgal",
+          "title": "Manager at Ola Electric /Brand Associate ...",
+          "linkedinUrl": "https://in.linkedin.com/in/sanchit-sehgal-aa67a11b9",
+          "snippet": "Manager at Ola Electric /Brand Associate in Ola electric /Procurement member in Ola cars · Experience: Ola Electric · Location: Gurugram · 500+ connections ..."
+        },
+        {
+          "name": "Prashant Sharma",
+          "firstName": "Prashant",
+          "lastName": "Sharma",
+          "title": "Building brands that move people and ...",
+          "linkedinUrl": "https://in.linkedin.com/in/prashantbrandmanager",
+          "snippet": "Brand Lead. Turno EV. Jan 2025 - Sep 2026 1 year 9 months. Bengaluru ... Brand Manager. Ola Electric. Jul 2022 - Jan 2025 2 years 7 months. Bengaluru ...Read more"
+        },
+        {
+          "name": "Namit Joshi",
+          "firstName": "Namit",
+          "lastName": "Joshi",
+          "title": "Manager, Corporate Communications - Ola ...",
+          "linkedinUrl": "https://in.linkedin.com/in/namit-joshi-8353157b",
+          "snippet": "As a Communications Manager at Ola Electric, I look after the PR strategy across the Ola Group, managing reputation, media relations, agency management, ...Read more"
+        },
+        {
+          "name": "Shivani Mody",
+          "firstName": "Shivani",
+          "lastName": "Mody",
+          "title": "Category @ Be Bodywise - Ex - Ola Electric",
+          "linkedinUrl": "https://in.linkedin.com/in/shivani-mody-a750b2192",
+          "snippet": "Experience ; Program Manager. Mosaic Wellness. Jun 2026 - Present 5 months ; Brand Manager. Ola Electric. May 2025 - May 2026 1 year 1 month ; Brand Management ...Read more"
+        },
+        {
+          "name": "Neeharika Soni",
+          "firstName": "Neeharika",
+          "lastName": "Soni",
+          "title": "Brand Management - Digital Marketing",
+          "linkedinUrl": "https://in.linkedin.com/in/neeharika-soni",
+          "snippet": "Experience. Brand Manager. Ola Electric. Sep 2024 - Present 2 years 2 months.Read more"
+        },
+        {
+          "name": "JAY KURCHANIA",
+          "firstName": "JAY",
+          "lastName": "KURCHANIA",
+          "title": "Brand Champion @ Ola Electric",
+          "linkedinUrl": "https://in.linkedin.com/in/jay-kurchania-02307b29a",
+          "snippet": "As the Brand Champion at Ola Electric, a leading electric mobility company in India, I lead the brand performance strategy and execution across multiple ...Read more"
+        },
+        {
+          "name": "Varun Khanna",
+          "firstName": "Varun",
+          "lastName": "Khanna",
+          "title": "Marketer - Licious (Past: Ola Electric, ...",
+          "linkedinUrl": "https://in.linkedin.com/in/varunkhanna3",
+          "snippet": "Experience ; Senior Vice President Marketing. Licious. May 2025 ; Head of Marketing. Ola Electric. Mar 2024 ; Vice President Marketing. BYJU'S. Feb 2022 ; Assistant ...Read more"
+        },
+        {
+          "name": "Harpreet Khanuja",
+          "firstName": "Harpreet",
+          "lastName": "Khanuja",
+          "title": "Manager Marketing and Activations",
+          "linkedinUrl": "https://in.linkedin.com/in/harpreet-khanuja-22a857281",
+          "snippet": "Manager Marketing and Activations at Ola Electric · Experience: Ola Electric · Location: Karnataka. View Harpreet Khanuja's profile on LinkedIn, ..."
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791634457088",
+    "timestamp": "2026-10-10T12:14:17.088Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"OLA ELECTRIC\" (\"Senior Brand Manager\" OR \"Brand Manager\" OR \"Head of Partnerships\" OR \"Partnerships\" OR brand OR partnership)",
+    "details": {}
+  },
+  {
+    "id": "log_1791634455818",
+    "timestamp": "2026-10-10T12:14:15.818Z",
+    "type": "waterfall_started",
+    "message": "Starting prospecting for \"OLA ELECTRIC\" [Phone: false]",
+    "details": {
+      "allRoles": [
+        "Senior Brand Manager",
+        "Head of Partnerships"
+      ],
+      "specificPerson": null,
+      "requiresPhone": false
+    }
+  },
+  {
+    "id": "log_1791634291323",
+    "timestamp": "2026-10-10T12:11:31.323Z",
+    "type": "corporate_pattern_found",
+    "message": "Resolved verified corporate email: pari.singhania@olaelectric.com",
+    "details": {}
+  },
+  {
+    "id": "log_1791634287418",
+    "timestamp": "2026-10-10T12:11:27.418Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/pari-singhania",
+    "details": {}
+  },
+  {
+    "id": "log_1791634287327",
+    "timestamp": "2026-10-10T12:11:27.327Z",
+    "type": "apify_search_completed",
+    "message": "Found 10 candidate(s) on Apify for OLA ELECTRIC",
+    "details": {
+      "candidates": [
+        {
+          "name": "Pari Singhania",
+          "firstName": "Pari",
+          "lastName": "Singhania",
+          "title": "Brand Manager @ Ola Electric - Haleon",
+          "linkedinUrl": "https://in.linkedin.com/in/pari-singhania",
+          "snippet": "I am a Brand Manager at Ola Electric, building high-impact campaigns at the intersection of brand, data, and execution. Experienced in product launches, ...Read more"
+        },
+        {
+          "name": "Sanchit Sehgal",
+          "firstName": "Sanchit",
+          "lastName": "Sehgal",
+          "title": "Manager at Ola Electric /Brand Associate ...",
+          "linkedinUrl": "https://in.linkedin.com/in/sanchit-sehgal-aa67a11b9",
+          "snippet": "Manager at Ola Electric /Brand Associate in Ola electric /Procurement member in Ola cars · Experience: Ola Electric · Location: Gurugram · 500+ connections ..."
+        },
+        {
+          "name": "Prashant Sharma",
+          "firstName": "Prashant",
+          "lastName": "Sharma",
+          "title": "Building brands that move people and ...",
+          "linkedinUrl": "https://in.linkedin.com/in/prashantbrandmanager",
+          "snippet": "Brand Lead. Turno EV. Jan 2025 - Sep 2026 1 year 9 months. Bengaluru ... Brand Manager. Ola Electric. Jul 2022 - Jan 2025 2 years 7 months. Bengaluru ...Read more"
+        },
+        {
+          "name": "Namit Joshi",
+          "firstName": "Namit",
+          "lastName": "Joshi",
+          "title": "Manager, Corporate Communications - Ola ...",
+          "linkedinUrl": "https://in.linkedin.com/in/namit-joshi-8353157b",
+          "snippet": "As a Communications Manager at Ola Electric, I look after the PR strategy across the Ola Group, managing reputation, media relations, agency management, ...Read more"
+        },
+        {
+          "name": "Harpreet Khanuja",
+          "firstName": "Harpreet",
+          "lastName": "Khanuja",
+          "title": "Manager Marketing and Activations",
+          "linkedinUrl": "https://in.linkedin.com/in/harpreet-khanuja-22a857281",
+          "snippet": "Manager Marketing and Activations at Ola Electric · Experience: Ola Electric · Location: Karnataka. View Harpreet Khanuja's profile on LinkedIn, ..."
+        },
+        {
+          "name": "JAY KURCHANIA",
+          "firstName": "JAY",
+          "lastName": "KURCHANIA",
+          "title": "Brand Champion @ Ola Electric",
+          "linkedinUrl": "https://in.linkedin.com/in/jay-kurchania-02307b29a",
+          "snippet": "As the Brand Champion at Ola Electric, a leading electric mobility company in India, I lead the brand performance strategy and execution across multiple ...Read more"
+        },
+        {
+          "name": "Abhishek Dubey",
+          "firstName": "Abhishek",
+          "lastName": "Dubey",
+          "title": "Seles Brand Champion - Ola Electric",
+          "linkedinUrl": "https://in.linkedin.com/in/abhishek-dubey-737628234",
+          "snippet": "Seles Brand Champion - Ola Electric · Experience: Ola Electric · Education: Uttarpradesh · Location: 395007 · 21 connections on LinkedIn."
+        },
+        {
+          "name": "Robin Aggarwal",
+          "firstName": "Robin",
+          "lastName": "Aggarwal",
+          "title": "Head of Business Development ...",
+          "linkedinUrl": "https://in.linkedin.com/in/robin-aggarwal-05aa991b",
+          "snippet": "Experience · CarDekho Group. 4 years 8 months. Head of Business Development, Partnerships & New Initiatives · Ola Electric. 1 year 11 months. Manager, Product ...Read more"
+        },
+        {
+          "name": "Shivani Mody",
+          "firstName": "Shivani",
+          "lastName": "Mody",
+          "title": "Category @ Be Bodywise - Ex - Ola Electric",
+          "linkedinUrl": "https://in.linkedin.com/in/shivani-mody-a750b2192",
+          "snippet": "Experience ; Program Manager. Mosaic Wellness. Jun 2026 - Present 5 months ; Brand Manager. Ola Electric. May 2025 - May 2026 1 year 1 month ; Brand Management ...Read more"
+        },
+        {
+          "name": "Neeharika Soni",
+          "firstName": "Neeharika",
+          "lastName": "Soni",
+          "title": "Brand Management - Digital Marketing",
+          "linkedinUrl": "https://in.linkedin.com/in/neeharika-soni",
+          "snippet": "Experience. Brand Manager. Ola Electric. Sep 2024 - Present 2 years 2 months.Read more"
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791634275432",
+    "timestamp": "2026-10-10T12:11:15.432Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"OLA ELECTRIC\" (\"Senior Brand Manager\" OR \"Brand Manager\" OR \"Head of Partnerships\" OR \"Partnerships\" OR brand OR partnership)",
+    "details": {}
+  },
+  {
+    "id": "log_1791634274107",
+    "timestamp": "2026-10-10T12:11:14.108Z",
+    "type": "waterfall_started",
+    "message": "Starting prospecting for \"OLA ELECTRIC\" [Phone: false]",
+    "details": {
+      "allRoles": [
+        "Senior Brand Manager",
+        "Head of Partnerships"
+      ],
+      "specificPerson": null,
+      "requiresPhone": false
+    }
+  },
+  {
+    "id": "log_1791633346905",
+    "timestamp": "2026-10-10T11:55:46.905Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/namit-joshi-8353157b",
+    "details": {}
+  },
+  {
+    "id": "log_1791633344104",
+    "timestamp": "2026-10-10T11:55:44.104Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/saurabhsharda",
+    "details": {}
+  },
+  {
+    "id": "log_1791633341288",
+    "timestamp": "2026-10-10T11:55:41.288Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/neeharika-soni",
+    "details": {}
+  },
+  {
+    "id": "log_1791633338297",
+    "timestamp": "2026-10-10T11:55:38.297Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/harpreet-khanuja-22a857281",
+    "details": {}
+  },
+  {
+    "id": "log_1791633334635",
+    "timestamp": "2026-10-10T11:55:34.635Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/sanchit-sehgal-aa67a11b9",
+    "details": {}
+  },
+  {
+    "id": "log_1791633330403",
+    "timestamp": "2026-10-10T11:55:30.403Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/pari-singhania",
+    "details": {}
+  },
+  {
+    "id": "log_1791632770018",
+    "timestamp": "2026-10-10T11:46:10.018Z",
+    "type": "apollo_lead_found",
+    "message": "Verified contact found on Apollo: vishruti.joshi@olaelectric.com",
+    "details": {}
+  },
+  {
+    "id": "log_1791632767154",
+    "timestamp": "2026-10-10T11:46:07.154Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/vishrutijoshi",
+    "details": {}
+  },
+  {
+    "id": "log_1791632763686",
+    "timestamp": "2026-10-10T11:46:03.686Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/shivani-mody-a750b2192",
+    "details": {}
+  },
+  {
+    "id": "log_1791632760724",
+    "timestamp": "2026-10-10T11:46:00.724Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/neeharika-soni",
+    "details": {}
+  },
+  {
+    "id": "log_1791632753977",
+    "timestamp": "2026-10-10T11:45:53.977Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/shubhas2024",
+    "details": {}
+  },
+  {
+    "id": "log_1791632752949",
+    "timestamp": "2026-10-10T11:45:52.949Z",
+    "type": "apify_email_mismatch_discarded",
+    "message": "Discarded unrelated email: rukmani.iyengar@lge.com (LG Electronics North America)",
+    "details": {}
+  },
+  {
+    "id": "log_1791632746424",
+    "timestamp": "2026-10-10T11:45:46.424Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://www.linkedin.com/in/rukmaniiyengar",
+    "details": {}
+  },
+  {
+    "id": "log_1791632739062",
+    "timestamp": "2026-10-10T11:45:39.062Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/prashantbrandmanager",
+    "details": {}
+  },
+  {
+    "id": "log_1791632729538",
+    "timestamp": "2026-10-10T11:45:29.538Z",
+    "type": "apify_email_search_started",
+    "message": "Querying Apify Email Scraper for: https://in.linkedin.com/in/pari-singhania",
+    "details": {}
+  },
+  {
+    "id": "log_1791632729535",
+    "timestamp": "2026-10-10T11:45:29.535Z",
+    "type": "apify_search_completed",
+    "message": "Found 9 candidate(s) on Apify for OLA ELECTRIC",
+    "details": {
+      "candidates": [
+        {
+          "name": "Pari Singhania",
+          "firstName": "Pari",
+          "lastName": "Singhania",
+          "title": "Brand Manager @ Ola Electric - Haleon",
+          "linkedinUrl": "https://in.linkedin.com/in/pari-singhania",
+          "snippet": "I am a Brand Manager at Ola Electric, building high-impact campaigns at the intersection of brand, data, and execution. Experienced in product launches, ...Read more"
+        },
+        {
+          "name": "Prashant Sharma",
+          "firstName": "Prashant",
+          "lastName": "Sharma",
+          "title": "Building brands that move people and ...",
+          "linkedinUrl": "https://in.linkedin.com/in/prashantbrandmanager",
+          "snippet": "Brand Manager. Ola Electric. Jul 2022 - Jan 2025 2 years 7 months. Bengaluru, Karnataka, India. Account Supervisor. Cheil India. Mar 2021 - Jun 2022 1 year 4 ...Read more"
+        },
+        {
+          "name": "Rukmani Iyengar",
+          "firstName": "Rukmani",
+          "lastName": "Iyengar",
+          "title": "Seasoned Brand & Marketing Specialist",
+          "linkedinUrl": "https://www.linkedin.com/in/rukmaniiyengar",
+          "snippet": "Experience ; Senior Brand Manager I OLA ELECTRIC. Ola. Aug 2022 · Jan 2023 6 months ; Senior Brand Manager I OLA DASH. Ola. Nov 2021 · Aug 2022 10 months ; Brand ...Read more"
+        },
+        {
+          "name": "Shubhangi Satpathy",
+          "firstName": "Shubhangi",
+          "lastName": "Satpathy",
+          "title": "Growth Lead @Repos Energy - IIMA",
+          "linkedinUrl": "https://in.linkedin.com/in/shubhas2024",
+          "snippet": "Experience · Senior Brand Manager. Ola Electric. Apr 2024 - May 2025 1 year 2 months. Bengaluru, Karnataka, India · Brand Manager. Ola Electric. Jul 2022 - Mar ...Read more"
+        },
+        {
+          "name": "Neeharika Soni",
+          "firstName": "Neeharika",
+          "lastName": "Soni",
+          "title": "Brand Management - Digital Marketing",
+          "linkedinUrl": "https://in.linkedin.com/in/neeharika-soni",
+          "snippet": "Experience. Brand Manager. Ola Electric. Sep 2024 - Present 2 years 2 months.Read more"
+        },
+        {
+          "name": "Shivani Mody",
+          "firstName": "Shivani",
+          "lastName": "Mody",
+          "title": "Category @ Be Bodywise - Ex - Ola Electric",
+          "linkedinUrl": "https://in.linkedin.com/in/shivani-mody-a750b2192",
+          "snippet": "Experience ; Program Manager. Mosaic Wellness. Jun 2026 - Present 5 months ; Brand Manager. Ola Electric. May 2025 - May 2026 1 year 1 month ; Brand Management ...Read more"
+        },
+        {
+          "name": "Vishruti Joshi",
+          "firstName": "Vishruti",
+          "lastName": "Joshi",
+          "title": "Area Manager at Ola Electric",
+          "linkedinUrl": "https://in.linkedin.com/in/vishrutijoshi",
+          "snippet": "... Ola Electric · Education: Institute of Rural Management Anand (IRMA) ... Brand Manager - Amulspray | Amulya | Amul T-Special (Baby Food & Dairy ...Read more"
+        },
+        {
+          "name": "‏Zubin Jauhari‏",
+          "firstName": "‏Zubin",
+          "lastName": "Jauhari‏",
+          "title": "‏Group Executive Creative Director",
+          "linkedinUrl": "https://ae.linkedin.com/in/zubin-jauhari-616300a5",
+          "snippet": "Zubin Jauhari. Group Executive Creative Director | 2x Cannes Lion Winner | IMPACT 30 Under 30 | Senior Brand & Marketing Leader | Ex Dentsu, Ola Electric & ...Read more"
+        },
+        {
+          "name": "Varun Khanna",
+          "firstName": "Varun",
+          "lastName": "Khanna",
+          "title": "Marketer - Licious (Past: Ola Electric, ...",
+          "linkedinUrl": "https://in.linkedin.com/in/varunkhanna3",
+          "snippet": "Marketer - Licious (Past: Ola Electric, BYJU'S, Colgate) Ex-CoFounder at Maverix (Foodtech startup) Ex-Consultant at MarketGate ... Assistant Brand Manager.Read more"
+        }
+      ]
+    }
+  },
+  {
+    "id": "log_1791632666826",
+    "timestamp": "2026-10-10T11:44:26.826Z",
+    "type": "apify_search_started",
+    "message": "Searching Apify for: site:linkedin.com/in/ \"OLA ELECTRIC\" (\"Senior Brand Manager\" OR \"Senior Brand Manager\" OR \"Brand Manager\" OR \"Partnerships Manager\")",
+    "details": {}
+  },
+  {
+    "id": "log_1791632665837",
+    "timestamp": "2026-10-10T11:44:25.837Z",
+    "type": "waterfall_started",
+    "message": "Starting prospecting for \"OLA ELECTRIC\" [Phone: false]",
+    "details": {
+      "allRoles": [
+        "Senior Brand Manager",
+        "Senior Brand Manager",
+        "Brand Manager",
+        "Partnerships Manager",
+        "Business Development Manager",
+        "Head of Marketing"
+      ],
+      "specificPerson": null,
+      "requiresPhone": false
+    }
+  },
+  {
     "id": "log_1791584323924",
     "timestamp": "2026-10-09T22:18:43.924Z",
     "type": "apollo_lead_found",
