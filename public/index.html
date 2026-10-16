@@ -160,6 +160,33 @@
             <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span> 1-Click Copy & Outreach
           </span>
         </div>
+      <!-- Segmented Category Switcher: Verified Emails vs LinkedIn Profiles Only -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white/70 backdrop-blur-sm p-2.5 rounded-[24px] border border-slate-200/70 shadow-2xs">
+        <div class="flex items-center bg-slate-100/90 p-1 rounded-full border border-slate-200/80 text-xs font-semibold shadow-2xs">
+          <button id="pill-filter-verified" onclick="setEmailFilter('verified')" class="bg-[#18181b] text-white shadow-xs px-4 py-2 rounded-full transition flex items-center gap-2 font-bold cursor-pointer">
+            <span class="w-2 h-2 rounded-full bg-[#22c55e]"></span>
+            <span>Verified Emails</span>
+            <span id="badge-verified-count" class="px-2 py-0.5 rounded-full bg-white/20 text-white text-[11px] font-bold">60</span>
+          </button>
+          
+          <button id="pill-filter-linkedin" onclick="setEmailFilter('linkedin')" class="text-slate-600 hover:text-slate-900 px-4 py-2 rounded-full transition flex items-center gap-2 cursor-pointer">
+            <i class="fa-brands fa-linkedin text-sky-600 text-xs"></i>
+            <span>LinkedIn Profiles Only</span>
+            <span id="badge-linkedin-count" class="px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 text-[11px] font-bold">138</span>
+          </button>
+
+          <button id="pill-filter-all" onclick="setEmailFilter('all')" class="text-slate-600 hover:text-slate-900 px-3.5 py-2 rounded-full transition flex items-center gap-1.5 cursor-pointer">
+            <span>All Leads</span>
+            <span id="badge-all-count" class="text-slate-400 font-normal text-[11px]">(198)</span>
+          </button>
+        </div>
+
+        <div class="text-xs text-slate-500 font-medium px-3 flex items-center gap-2">
+          <span class="inline-flex items-center gap-1 text-[#16a34a] font-bold">
+            <i class="fa-solid fa-bolt"></i> Priority Mode:
+          </span>
+          <span id="priority-mode-text" class="text-slate-700 font-semibold">Verified Direct Emails First</span>
+        </div>
       </div>
 
       <!-- Filter Toolbar & Search Bar -->
@@ -502,15 +529,26 @@
         const logs = await logsRes.json();
         allEmails = await emailsRes.json();
 
-        // Update badges
+        // Calculate counts for segment badges
+        const verifiedCount = allLeads.filter(l => l.email && l.email.includes('@')).length;
+        const linkedinCount = allLeads.filter(l => !l.email || !l.email.includes('@')).length;
+
+        // Update segmentation badges
+        const bVer = document.getElementById('badge-verified-count');
+        const bLin = document.getElementById('badge-linkedin-count');
+        const bAll = document.getElementById('badge-all-count');
+        if (bVer) bVer.textContent = verifiedCount;
+        if (bLin) bLin.textContent = linkedinCount;
+        if (bAll) bAll.textContent = `(${allLeads.length})`;
+
+        // Update main dashboard badges
         document.getElementById('badge-total-leads').textContent = allLeads.length || 0;
-        document.getElementById('leads-count-text').textContent = allLeads.length || 0;
         document.getElementById('overview-total').textContent = allLeads.length || 0;
         document.getElementById('overview-queries').textContent = stats.totalQueries || 0;
         document.getElementById('badge-email-count').textContent = allEmails.length || 0;
         document.getElementById('overview-emails').textContent = stats.totalEmailsSent || 0;
 
-        renderLeads(allLeads);
+        filterLeads();
         renderLogs(logs);
         renderEmails(allEmails);
       } catch (err) {
@@ -886,12 +924,47 @@
       }, 3500);
     }
 
+    let currentEmailFilter = 'verified'; // Default priority: verified direct emails first
+
+    function setEmailFilter(mode) {
+      currentEmailFilter = mode;
+
+      const btnVerified = document.getElementById('pill-filter-verified');
+      const btnLinkedin = document.getElementById('pill-filter-linkedin');
+      const btnAll = document.getElementById('pill-filter-all');
+      const priorityText = document.getElementById('priority-mode-text');
+
+      const inactiveClass = 'text-slate-600 hover:text-slate-900 px-4 py-2 rounded-full transition flex items-center gap-2 cursor-pointer font-medium';
+
+      if (btnVerified) btnVerified.className = inactiveClass;
+      if (btnLinkedin) btnLinkedin.className = inactiveClass;
+      if (btnAll) btnAll.className = inactiveClass;
+
+      if (mode === 'verified' && btnVerified) {
+        btnVerified.className = 'bg-[#18181b] text-white shadow-xs px-4 py-2 rounded-full transition flex items-center gap-2 font-bold cursor-pointer';
+        if (priorityText) priorityText.textContent = 'Verified Direct Emails First';
+      } else if (mode === 'linkedin' && btnLinkedin) {
+        btnLinkedin.className = 'bg-[#0a66c2] text-white shadow-xs px-4 py-2 rounded-full transition flex items-center gap-2 font-bold cursor-pointer';
+        if (priorityText) priorityText.textContent = 'LinkedIn Profiles (Direct Connect)';
+      } else if (btnAll) {
+        btnAll.className = 'bg-[#18181b] text-white shadow-xs px-4 py-2 rounded-full transition flex items-center gap-2 font-bold cursor-pointer';
+        if (priorityText) priorityText.textContent = 'All Discovered Investor Leads';
+      }
+
+      filterLeads();
+    }
+
     function filterLeads() {
       const q = document.getElementById('search-input').value.toLowerCase();
       const src = document.getElementById('filter-source').value;
       const city = document.getElementById('filter-city').value;
 
       const filtered = allLeads.filter(l => {
+        // Priority Segment Filter: verified emails vs LinkedIn profiles only
+        const hasEmail = Boolean(l.email && l.email.includes('@'));
+        if (currentEmailFilter === 'verified' && !hasEmail) return false;
+        if (currentEmailFilter === 'linkedin' && hasEmail) return false;
+
         const matchesQuery = 
           (l.name && l.name.toLowerCase().includes(q)) ||
           (l.brand && l.brand.toLowerCase().includes(q)) ||

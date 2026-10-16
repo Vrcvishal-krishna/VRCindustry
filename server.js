@@ -27,27 +27,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Health check endpoint for Render & uptime monitors
 app.get('/health', (req, res) => res.status(200).json({ status: 'healthy', uptime: process.uptime() }));
 
-// API: Get Leads (only leads with verified emails)
+// API: Get Leads
 app.get('/api/leads', (req, res) => {
-  const all = getLeads();
-  const verifiedOnly = all.filter(l => l && l.email && l.email.includes('@'));
-  res.json(verifiedOnly);
+  res.json(getLeads());
 });
 
-// API: Sync / Import Verified Leads into Dashboard
+// API: Sync / Import Leads into Dashboard
 app.post('/api/leads/sync', (req, res) => {
   const newLeads = Array.isArray(req.body) ? req.body : [req.body];
   const existing = getLeads();
   const getKey = (l) => {
     if (l.email && l.email.includes('@')) return l.email.toLowerCase().trim();
-    return null;
+    if (l.linkedinUrl) return l.linkedinUrl.toLowerCase().trim();
+    return l.id;
   };
   const existingKeys = new Set(existing.map(getKey).filter(Boolean));
   let added = 0;
 
   for (const lead of newLeads) {
-    // STRICT REQUIREMENT: Only leads with valid verified emails are allowed on the dashboard!
-    if (!lead || !lead.email || !lead.email.includes('@')) continue;
+    if (!lead) continue;
     const key = getKey(lead);
     if (key && !existingKeys.has(key)) {
       saveLead(lead);
@@ -56,7 +54,7 @@ app.post('/api/leads/sync', (req, res) => {
     }
   }
 
-  res.json({ success: true, added, total: getLeads().filter(l => l.email && l.email.includes('@')).length });
+  res.json({ success: true, added, total: getLeads().length });
 });
 
 // API: Clean up / Purge any leads without a verified email
@@ -67,12 +65,11 @@ app.post('/api/leads/cleanup', (req, res) => {
   res.json({ success: true, removed: all.length - valid.length, total: valid.length });
 });
 
-// API: Replace entire leads list with verified leads
+// API: Replace entire leads list
 app.post('/api/leads/replace-all', (req, res) => {
   const incoming = Array.isArray(req.body) ? req.body : [];
-  const valid = incoming.filter(l => l && l.email && l.email.includes('@'));
-  setLeads(valid);
-  res.json({ success: true, total: valid.length });
+  setLeads(incoming);
+  res.json({ success: true, total: incoming.length });
 });
 
 // API: Delete a Lead
