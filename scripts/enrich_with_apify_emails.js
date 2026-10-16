@@ -13,8 +13,15 @@ if (!fs.existsSync(path.dirname(VERIFIED_CSV))) {
   fs.mkdirSync(path.dirname(VERIFIED_CSV), { recursive: true });
 }
 
+function getSlug(url) {
+  if (!url) return '';
+  const match = url.match(/\/in\/([^/?#]+)/i);
+  return match ? match[1].toLowerCase().trim() : url.toLowerCase().trim();
+}
+
 function loadVerified() {
   const seenUrls = new Set();
+  const seenSlugs = new Set();
   const seenEmails = new Set();
   let list = [];
 
@@ -22,7 +29,10 @@ function loadVerified() {
     try {
       list = JSON.parse(fs.readFileSync(VERIFIED_JSON, 'utf8'));
       for (const item of list) {
-        if (item.linkedinUrl) seenUrls.add(item.linkedinUrl.toLowerCase().trim());
+        if (item.linkedinUrl) {
+          seenUrls.add(item.linkedinUrl.toLowerCase().trim());
+          seenSlugs.add(getSlug(item.linkedinUrl));
+        }
         if (item.email) seenEmails.add(item.email.toLowerCase().trim());
       }
     } catch (e) {
@@ -48,7 +58,7 @@ function loadVerified() {
     fs.writeFileSync(VERIFIED_CSV, headers.join(',') + '\n', 'utf8');
   }
 
-  return { seenUrls, seenEmails, list };
+  return { seenUrls, seenSlugs, seenEmails, list };
 }
 
 function saveVerifiedLead(lead, list) {
@@ -132,14 +142,15 @@ async function main() {
   const profiles = JSON.parse(fs.readFileSync(PROFILES_JSON, 'utf8'));
   console.log(`[Source] Loaded ${profiles.length} LinkedIn profiles.`);
 
-  const { seenUrls, seenEmails, list } = loadVerified();
+  const { seenUrls, seenSlugs, seenEmails, list } = loadVerified();
   console.log(`[Cache] Already have ${list.length} verified emails in database.`);
 
   // Filter to profiles that need email enrichment
   const toEnrich = profiles.filter(p => {
     if (!p.linkedinUrl) return false;
     const urlKey = p.linkedinUrl.toLowerCase().trim();
-    return !seenUrls.has(urlKey);
+    const slug = getSlug(p.linkedinUrl);
+    return !seenUrls.has(urlKey) && !seenSlugs.has(slug);
   });
 
   console.log(`[Queue] ${toEnrich.length} profiles queued for verified email enrichment.\n`);
