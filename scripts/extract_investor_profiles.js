@@ -72,51 +72,49 @@ function saveCandidate(candidate, list) {
   ];
   fs.appendFileSync(OUTPUT_CSV, row.join(',') + '\n', 'utf8');
 
-  // Only sync to dashboard if a verified email exists
-  if (candidate.email && candidate.email.includes('@')) {
-    try {
-      let dashboardLeads = [];
-      if (fs.existsSync(LEADS_JSON)) {
-        dashboardLeads = JSON.parse(fs.readFileSync(LEADS_JSON, 'utf8'));
-      }
-      dashboardLeads.unshift({
+  // Sync to dashboard database
+  try {
+    let dashboardLeads = [];
+    if (fs.existsSync(LEADS_JSON)) {
+      dashboardLeads = JSON.parse(fs.readFileSync(LEADS_JSON, 'utf8'));
+    }
+    dashboardLeads.push({
+      id: candidate.id,
+      brand: candidate.company || 'Angel Investment',
+      proposal: 'Targeted Investor Outreach',
+      name: candidate.name,
+      title: candidate.title,
+      linkedinUrl: candidate.linkedinUrl,
+      email: candidate.email || '',
+      emailStatus: candidate.email ? 'verified' : 'linkedin_profile',
+      phone: 'Not Available',
+      city: candidate.city,
+      source: 'LinkedIn Direct',
+      timestamp: candidate.timestamp
+    });
+    fs.writeFileSync(LEADS_JSON, JSON.stringify(dashboardLeads, null, 2), 'utf8');
+  } catch (err) {}
+
+  try {
+    fetch(RENDER_SYNC_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
         id: candidate.id,
         brand: candidate.company || 'Angel Investment',
         proposal: 'Targeted Investor Outreach',
         name: candidate.name,
         title: candidate.title,
         linkedinUrl: candidate.linkedinUrl,
-        email: candidate.email,
-        emailStatus: 'verified',
+        email: candidate.email || '',
+        emailStatus: candidate.email ? 'verified' : 'linkedin_profile',
         phone: 'Not Available',
         city: candidate.city,
         source: 'LinkedIn Direct',
         timestamp: candidate.timestamp
-      });
-      fs.writeFileSync(LEADS_JSON, JSON.stringify(dashboardLeads, null, 2), 'utf8');
-    } catch (err) {}
-
-    try {
-      fetch(RENDER_SYNC_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: candidate.id,
-          brand: candidate.company || 'Angel Investment',
-          proposal: 'Targeted Investor Outreach',
-          name: candidate.name,
-          title: candidate.title,
-          linkedinUrl: candidate.linkedinUrl,
-          email: candidate.email,
-          emailStatus: 'verified',
-          phone: 'Not Available',
-          city: candidate.city,
-          source: 'LinkedIn Direct',
-          timestamp: candidate.timestamp
-        })
-      }).catch(() => {});
-    } catch (e) {}
-  }
+      })
+    }).catch(() => {});
+  } catch (e) {}
 }
 
 /**
