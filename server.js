@@ -35,12 +35,17 @@ app.get('/api/leads', (req, res) => {
 app.post('/api/leads/sync', (req, res) => {
   const newLeads = Array.isArray(req.body) ? req.body : [req.body];
   const existing = getLeads();
-  const existingKeys = new Set(existing.map(l => (l.email ? l.email.toLowerCase() : l.id)));
+  const getKey = (l) => {
+    if (l.email && l.email.includes('@')) return l.email.toLowerCase().trim();
+    if (l.linkedinUrl) return l.linkedinUrl.toLowerCase().trim();
+    return l.id;
+  };
+  const existingKeys = new Set(existing.map(getKey));
   let added = 0;
 
   for (const lead of newLeads) {
     if (!lead) continue;
-    const key = lead.email ? lead.email.toLowerCase() : lead.id;
+    const key = getKey(lead);
     if (key && !existingKeys.has(key)) {
       saveLead(lead);
       existingKeys.add(key);
