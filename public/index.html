@@ -608,9 +608,10 @@
                   </button>
                 </div>
               ` : `
-                <a href="${escapeHtml(l.linkedinUrl)}" target="_blank" onclick="event.stopPropagation()" class="text-sky-600 hover:text-sky-700 inline-flex items-center gap-1 font-sans font-semibold text-xs">
-                  <span>View LinkedIn</span>
-                  <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                <a href="${escapeHtml(l.linkedinUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200/90 font-semibold text-xs transition shadow-2xs">
+                  <i class="fa-brands fa-linkedin text-sky-600 text-sm"></i>
+                  <span>Open LinkedIn</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[9px] text-sky-500"></i>
                 </a>
               `}
             </td>
@@ -635,13 +636,20 @@
               `}
             </td>
 
-            <!-- Actions: Draft Email & Delete -->
+            <!-- Actions: Draft Email or Connect on LinkedIn -->
             <td class="py-3.5 px-4 text-right">
               <div class="inline-flex items-center gap-1.5">
-                <button onclick="openDraftModalForLead('${l.id}'); event.stopPropagation();" class="px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-black text-white text-[11px] font-bold inline-flex items-center gap-1.5 transition shadow-2xs">
-                  <i class="fa-regular fa-paper-plane text-[10px] text-[#22c55e]"></i>
-                  <span>Draft Email</span>
-                </button>
+                ${(l.email && l.email.includes('@')) ? `
+                  <button onclick="openDraftModalForLead('${l.id}'); event.stopPropagation();" class="px-3 py-1.5 rounded-full bg-[#18181b] hover:bg-black text-white text-[11px] font-bold inline-flex items-center gap-1.5 transition shadow-2xs">
+                    <i class="fa-regular fa-paper-plane text-[10px] text-[#22c55e]"></i>
+                    <span>Draft Email</span>
+                  </button>
+                ` : `
+                  <a href="${escapeHtml(l.linkedinUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation()" class="px-3.5 py-1.5 rounded-full bg-[#0a66c2] hover:bg-[#004182] text-white text-[11px] font-bold inline-flex items-center gap-1.5 transition shadow-2xs">
+                    <i class="fa-brands fa-linkedin text-[12px]"></i>
+                    <span>Connect</span>
+                  </a>
+                `}
                 <button onclick="deleteLead('${l.id}'); event.stopPropagation();" class="w-7 h-7 rounded-full bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-400 flex items-center justify-center transition" title="Delete prospect">
                   <i class="fa-regular fa-trash-can text-xs"></i>
                 </button>
