@@ -600,12 +600,19 @@
 
             <!-- Verified Email -->
             <td class="py-3.5 px-4 font-mono text-[11px]">
-              <div class="flex items-center gap-1.5">
-                <span class="font-bold text-[#16a34a]">${escapeHtml(l.email)}</span>
-                <button onclick="copyToClipboard('${escapeHtml(l.email)}'); event.stopPropagation();" class="text-slate-400 hover:text-slate-700 p-0.5" title="Copy">
-                  <i class="fa-regular fa-copy text-[10px]"></i>
-                </button>
-              </div>
+              ${(l.email && l.email.includes('@')) ? `
+                <div class="flex items-center gap-1.5">
+                  <span class="font-bold text-[#16a34a]">${escapeHtml(l.email)}</span>
+                  <button onclick="copyToClipboard('${escapeHtml(l.email)}'); event.stopPropagation();" class="text-slate-400 hover:text-slate-700 p-0.5" title="Copy">
+                    <i class="fa-regular fa-copy text-[10px]"></i>
+                  </button>
+                </div>
+              ` : `
+                <a href="${escapeHtml(l.linkedinUrl)}" target="_blank" onclick="event.stopPropagation()" class="text-sky-600 hover:text-sky-700 inline-flex items-center gap-1 font-sans font-semibold text-xs">
+                  <span>View LinkedIn</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
+                </a>
+              `}
             </td>
 
             <!-- Phone -->
@@ -615,10 +622,17 @@
 
             <!-- Status -->
             <td class="py-3.5 px-4 text-center">
-              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf8ee] text-[#16a34a] font-bold text-[10px]">
-                <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
-                Verified
-              </span>
+              ${(l.email && l.email.includes('@')) ? `
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#eaf8ee] text-[#16a34a] font-bold text-[10px]">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
+                  Verified Email
+                </span>
+              ` : `
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 font-medium text-[10px]">
+                  <i class="fa-brands fa-linkedin text-sky-600 text-[10px]"></i>
+                  Profile Only
+                </span>
+              `}
             </td>
 
             <!-- Actions: Draft Email & Delete -->
