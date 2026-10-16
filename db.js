@@ -131,8 +131,13 @@ function getStats() {
   };
 }
 
+function setLeads(leads) {
+  writeJSON(LEADS_FILE, leads);
+}
+
 module.exports = {
   getLeads,
+  setLeads,
   saveLead,
   deleteLead,
   getLogs,

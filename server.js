@@ -4,6 +4,7 @@ const path = require('path');
 const config = require('./config');
 const { 
   getLeads, 
+  setLeads,
   getStats, 
   getLogs, 
   saveLead, 
@@ -26,9 +27,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Health check endpoint for Render & uptime monitors
 app.get('/health', (req, res) => res.status(200).json({ status: 'healthy', uptime: process.uptime() }));
 
-// API: Get Leads
+// API: Get Leads (only leads with verified emails)
 app.get('/api/leads', (req, res) => {
-  res.json(getLeads());
+  const all = getLeads();
+  const verifiedOnly = all.filter(l => l && l.email && l.email.includes('@'));
+  res.json(verifiedOnly);
 });
 
 // API: Sync / Import Verified Leads into Dashboard
@@ -37,14 +40,14 @@ app.post('/api/leads/sync', (req, res) => {
   const existing = getLeads();
   const getKey = (l) => {
     if (l.email && l.email.includes('@')) return l.email.toLowerCase().trim();
-    if (l.linkedinUrl) return l.linkedinUrl.toLowerCase().trim();
-    return l.id;
+    return null;
   };
-  const existingKeys = new Set(existing.map(getKey));
+  const existingKeys = new Set(existing.map(getKey).filter(Boolean));
   let added = 0;
 
   for (const lead of newLeads) {
-    if (!lead) continue;
+    // STRICT REQUIREMENT: Only leads with valid verified emails are allowed on the dashboard!
+    if (!lead || !lead.email || !lead.email.includes('@')) continue;
     const key = getKey(lead);
     if (key && !existingKeys.has(key)) {
       saveLead(lead);
@@ -53,7 +56,23 @@ app.post('/api/leads/sync', (req, res) => {
     }
   }
 
-  res.json({ success: true, added, total: getLeads().length });
+  res.json({ success: true, added, total: getLeads().filter(l => l.email && l.email.includes('@')).length });
+});
+
+// API: Clean up / Purge any leads without a verified email
+app.post('/api/leads/cleanup', (req, res) => {
+  const all = getLeads();
+  const valid = all.filter(l => l && l.email && l.email.includes('@'));
+  setLeads(valid);
+  res.json({ success: true, removed: all.length - valid.length, total: valid.length });
+});
+
+// API: Replace entire leads list with verified leads
+app.post('/api/leads/replace-all', (req, res) => {
+  const incoming = Array.isArray(req.body) ? req.body : [];
+  const valid = incoming.filter(l => l && l.email && l.email.includes('@'));
+  setLeads(valid);
+  res.json({ success: true, total: valid.length });
 });
 
 // API: Delete a Lead
